@@ -1,6 +1,6 @@
 package com.yosep.coupon.coupon.data.jpa.entity
 
-import com.yosep.coupon.coupon.data.jpa.dto.OrderCouponDtoForCreation
+import com.yosep.coupon.coupon.data.jpa.dto.OrderProductDiscountCouponDto
 import java.time.LocalDateTime
 import javax.persistence.DiscriminatorValue
 import javax.persistence.Entity
@@ -15,6 +15,7 @@ class ProductDiscountCoupon(
     couponStock: CouponStock,
     productId: String,
     couponDiscount: CouponDiscount,
+    couponByUsers: List<CouponByUser>,
     startTime: LocalDateTime,
     endTime: LocalDateTime,
 ) : Coupon(
@@ -24,15 +25,17 @@ class ProductDiscountCoupon(
     couponStock,
     productId,
     couponDiscount,
+    couponByUsers,
     startTime,
     endTime
 ) {
-    override fun calculatePrice(orderCouponDtoForCreation: OrderCouponDtoForCreation): Long {
-        TODO("Not yet implemented")
+    override fun calculatePrice(orderProductDiscountCouponDto: OrderProductDiscountCouponDto): Long {
+        validateCouponDto(orderProductDiscountCouponDto)
 
+        return couponDiscount.calculateProductPrice(orderProductDiscountCouponDto.totalPrice * orderProductDiscountCouponDto.productCount)
     }
 
-    override fun useOneCoupon(orderCouponDtoForCreation: OrderCouponDtoForCreation) {
-        TODO("Not yet implemented")
+    override fun getCoupon(orderProductDiscountCouponDto: OrderProductDiscountCouponDto) {
+
     }
 }

@@ -1,9 +1,8 @@
 package com.yosep.coupon.coupon.data.jpa.entity
 
 import com.yosep.coupon.common.data.BaseEntity
-import com.yosep.coupon.common.exception.StateChangeException
-import com.yosep.coupon.coupon.data.jpa.dto.OrderCouponDtoForCreation
-import java.util.function.Supplier
+import com.yosep.coupon.common.exception.NoHasCouponException
+import com.yosep.coupon.coupon.data.jpa.dto.OrderProductDiscountCouponDto
 import javax.persistence.*
 import javax.validation.constraints.NotNull
 
@@ -18,19 +17,31 @@ class CouponByUser(
     private val id: String,
     @Column(nullable = false)
     private val userId: String,
-    @OneToOne(cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+    @JoinColumn(name = "coupon_id", nullable = true)
     private val coupon: Coupon,
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private val editableState: @NotNull EditableState = EditableState.OFF,
     @Enumerated(EnumType.STRING)
-    private val state: CouponState = CouponState.READY
+    private var state: CouponState = CouponState.READY
 ) : BaseEntity() {
-    private fun validateCouponDto(orderCouponDtoForCreation: OrderCouponDtoForCreation) {
+    private fun validateCouponDto(orderProductDiscountCouponDto: OrderProductDiscountCouponDto) {
 
-        if(this.userId != orderCouponDtoForCreation.userId) {
-
+        if (this.userId != orderProductDiscountCouponDto.userId) {
+            orderProductDiscountCouponDto.state = "NoHasCouponException"
+            throw NoHasCouponException("${orderProductDiscountCouponDto.userId}님은 해당 쿠폰을 가지고있지 않습니다.")
         }
+    }
+
+    fun use(orderProductDiscountCouponDto: OrderProductDiscountCouponDto): OrderProductDiscountCouponDto {
+        validateCouponDto(orderProductDiscountCouponDto)
+        val coupon = this.coupon
+
+        orderProductDiscountCouponDto.calculatedPrice = coupon.calculatePrice(orderProductDiscountCouponDto)
+        this.state = CouponState.COMP
+
+        return orderProductDiscountCouponDto
     }
 }
 

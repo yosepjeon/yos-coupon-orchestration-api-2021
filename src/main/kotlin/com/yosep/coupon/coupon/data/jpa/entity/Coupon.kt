@@ -1,9 +1,10 @@
 package com.yosep.coupon.coupon.data.jpa.entity
 
 import com.yosep.coupon.common.data.BaseEntity
-import com.yosep.coupon.coupon.data.jpa.dto.DiscountCouponDto
-import com.yosep.coupon.coupon.data.jpa.dto.OrderCouponDtoForCreation
-import com.yosep.coupon.coupon.data.jpa.dto.ProductDiscountCouponDto
+import com.yosep.coupon.common.exception.InvalidPriceException
+import com.yosep.coupon.common.exception.NotEqualDiscountAmountException
+import com.yosep.coupon.common.exception.NotEqualDiscountPercentException
+import com.yosep.coupon.coupon.data.jpa.dto.OrderProductDiscountCouponDto
 import java.time.LocalDateTime
 import javax.persistence.*
 import javax.validation.constraints.NotNull
@@ -15,7 +16,7 @@ import javax.validation.constraints.NotNull
 abstract class Coupon(
     @Id
     @Column(length = 20)
-    open val id: String? = null,
+    open val couponId: String? = null,
     @Column(nullable = false)
     open var name: @NotNull String,
     @Enumerated(EnumType.STRING)
@@ -27,21 +28,30 @@ abstract class Coupon(
     open var productId: String,
     @Embedded
     open val couponDiscount: CouponDiscount,
+    @OneToMany(mappedBy = "coupon", fetch = FetchType.LAZY)
+    open val couponByUsers: List<CouponByUser>,
     @Column(nullable = true)
     open var startTime: LocalDateTime,
     @Column(nullable = true)
     open var endTime: LocalDateTime
 ) : BaseEntity() {
-    abstract fun calculatePrice(orderCouponDtoForCreation: OrderCouponDtoForCreation): Long
-    abstract fun useOneCoupon(orderCouponDtoForCreation: OrderCouponDtoForCreation)
+    abstract fun calculatePrice(orderProductDiscountCouponDto: OrderProductDiscountCouponDto): Long
+    abstract fun getCoupon(orderProductDiscountCouponDto: OrderProductDiscountCouponDto)
 
-    private fun validateCouponDto(orderCouponDtoForCreation: OrderCouponDtoForCreation) {
-        if(this.couponDiscount.discountAmount != orderCouponDtoForCreation.discountAmount) {
-
+    protected fun validateCouponDto(orderProductDiscountCouponDto: OrderProductDiscountCouponDto) {
+        if (this.couponDiscount.discountAmount != orderProductDiscountCouponDto.discountAmount) {
+            orderProductDiscountCouponDto.state = "NotEqualDiscountAmountException"
+            throw NotEqualDiscountAmountException("할인 금액이 맞지않습니다.")
         }
 
-        if(this.couponDiscount.discountPercent != orderCouponDtoForCreation.discountPercent) {
+        if (this.couponDiscount.discountPercent != orderProductDiscountCouponDto.discountPercent) {
+            orderProductDiscountCouponDto.state = "NotEqualDiscountPercentException"
+            throw NotEqualDiscountPercentException("할인 비율이 맞지않습니다.")
+        }
 
+        if (orderProductDiscountCouponDto.totalPrice < 0) {
+            orderProductDiscountCouponDto.state = "InvalidPriceException"
+            throw InvalidPriceException("가격이 0 미만입니다.")
         }
     }
 //    abstract fun use(t: T)

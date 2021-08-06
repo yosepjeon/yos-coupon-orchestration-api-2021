@@ -2,7 +2,7 @@ package com.yosep.coupon.coupon.data.jpa.entity
 
 import com.yosep.coupon.common.data.RandomIdGenerator.generate
 import com.yosep.coupon.common.exception.InvalidStockValueException
-import com.yosep.coupon.coupon.data.jpa.dto.OrderCouponDtoForCreation
+import com.yosep.coupon.coupon.data.jpa.dto.OrderProductDiscountCouponDto
 import javax.persistence.*
 import javax.validation.constraints.NotNull
 
@@ -36,20 +36,20 @@ class CouponStock(
         remain -= value
     }
 
-    fun decreaseStock(orderCouponDtoForCreation: OrderCouponDtoForCreation) {
-        val value: Long = orderCouponDtoForCreation.count
-        validateStock(orderCouponDtoForCreation)
+    fun decreaseStock(orderProductDiscountCouponDto: OrderProductDiscountCouponDto) {
+        val value: Long = orderProductDiscountCouponDto.productCount
+        validateStock(orderProductDiscountCouponDto)
         this.remain -= value
     }
 
-    fun increaseStock(orderCouponDtoForCreation: OrderCouponDtoForCreation) {
-        validateStock(orderCouponDtoForCreation)
-        this.remain += orderCouponDtoForCreation.count
+    fun increaseStock(orderProductDiscountCouponDto: OrderProductDiscountCouponDto) {
+        validateStock(orderProductDiscountCouponDto)
+        this.remain += orderProductDiscountCouponDto.productCount
     }
 
-    private fun validateStock(orderCouponDtoForCreation: OrderCouponDtoForCreation) {
-        if (orderCouponDtoForCreation.count < 0L || this.remain - orderCouponDtoForCreation.count < 0L) {
-            orderCouponDtoForCreation.state = "InvalidStockValueException"
+    private fun validateStock(orderProductDiscountCouponDto: OrderProductDiscountCouponDto) {
+        if (orderProductDiscountCouponDto.productCount < 0L || this.remain - orderProductDiscountCouponDto.productCount < 0L) {
+            orderProductDiscountCouponDto.state = "InvalidStockValueException"
             throw InvalidStockValueException("0이상의 결과값이어야합니다.")
         }
     }
