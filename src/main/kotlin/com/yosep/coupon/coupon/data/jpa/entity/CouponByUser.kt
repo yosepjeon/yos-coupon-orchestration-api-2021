@@ -26,14 +26,6 @@ class CouponByUser(
     @Enumerated(EnumType.STRING)
     private var state: CouponState = CouponState.READY
 ) : BaseEntity() {
-    private fun validateCouponDto(orderProductDiscountCouponDto: OrderProductDiscountCouponDto) {
-
-        if (this.userId != orderProductDiscountCouponDto.userId) {
-            orderProductDiscountCouponDto.state = "NoHasCouponException"
-            throw NoHasCouponException("${orderProductDiscountCouponDto.userId}님은 해당 쿠폰을 가지고있지 않습니다.")
-        }
-    }
-
     fun use(orderProductDiscountCouponDto: OrderProductDiscountCouponDto): OrderProductDiscountCouponDto {
         validateCouponDto(orderProductDiscountCouponDto)
         val coupon = this.coupon
@@ -42,6 +34,22 @@ class CouponByUser(
         this.state = CouponState.COMP
 
         return orderProductDiscountCouponDto
+    }
+
+    private fun validateCouponDto(orderProductDiscountCouponDto: OrderProductDiscountCouponDto) {
+
+        if (this.userId != orderProductDiscountCouponDto.userId) {
+            orderProductDiscountCouponDto.state = "NoHasCouponException"
+            throw NoHasCouponException("${orderProductDiscountCouponDto.userId}님은 해당 쿠폰을 가지고있지 않습니다.")
+        }
+    }
+
+    fun validateCouponDtoNotPublishException(orderProductDiscountCouponDto: OrderProductDiscountCouponDto) {
+        if (this.userId != orderProductDiscountCouponDto.userId) {
+            orderProductDiscountCouponDto.state = "NoHasCouponException"
+        }
+
+        coupon.validateCouponDtoNotPublishException(orderProductDiscountCouponDto)
     }
 }
 

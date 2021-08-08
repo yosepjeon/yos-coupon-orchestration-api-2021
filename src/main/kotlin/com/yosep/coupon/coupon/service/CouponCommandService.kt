@@ -1,6 +1,6 @@
 package com.yosep.coupon.coupon.service
 
-import com.yosep.coupon.common.exception.NotExistElementException
+import com.yosep.coupon.common.exception.*
 import com.yosep.coupon.coupon.data.jpa.dto.OrderProductDiscountCouponStepDto
 import com.yosep.coupon.coupon.data.jpa.repository.db.CouponByUserRepository
 import com.yosep.coupon.data.jpa.repository.db.CouponRepository
@@ -17,22 +17,21 @@ class CouponCommandService @Autowired constructor(
 ) {
 
     /*
-     * SAGA 쿠폰 스텝 진행
+     * SAGA 상품 할인 쿠폰 스텝 진행
      * Logic:
      */
     @Transactional(
         readOnly = false,
-//        rollbackFor = [NotExistElementException::class, RuntimeException::class, NotEqualProductPrice::class, InvalidStockValueException::class],
+        rollbackFor = [NotExistElementException::class, RuntimeException::class, NotEqualDiscountAmountException::class, NotEqualDiscountPercentException::class, InvalidPriceException::class, NoHasCouponException::class],
     )
-    fun processProductDiscountCouponStep(orderProductDiscountCouponStepDto: OrderProductDiscountCouponStepDto) {
-        val orderCouponDtos = orderProductDiscountCouponStepDto.orderProductDiscountCouponDtos
+    fun processProductDiscountCouponStep(orderProductDiscountCouponStepDto: OrderProductDiscountCouponStepDto): OrderProductDiscountCouponStepDto {
+        val orderCouponDtoForCreations = orderProductDiscountCouponStepDto.orderProductDiscountCouponDtos
 
-        orderCouponDtos.forEach { orderCouponDtoForCreation ->
+        orderCouponDtoForCreations.forEach { orderCouponDtoForCreation ->
             orderCouponDtoForCreation.state = "PENDING"
 
-//            val optionalCoupon = couponRepository.findById(orderCouponDtoForCreation.couponByUserId)
             val optionalCoupon = couponByUserRepository.findById(orderCouponDtoForCreation.couponByUserId)
-            if(optionalCoupon.isEmpty) {
+            if (optionalCoupon.isEmpty) {
                 orderCouponDtoForCreation.state = "NotExistElementException"
                 throw NotExistElementException(
                     orderCouponDtoForCreation.couponByUserId + " 해당 쿠폰이 존재하지 않습니다."
@@ -40,12 +39,35 @@ class CouponCommandService @Autowired constructor(
             }
 
             val selectedCoupon = optionalCoupon.get()
-//            selectedCoupon.
+            selectedCoupon.use(orderCouponDtoForCreation)
+            orderCouponDtoForCreation.state = "COMP"
+        }
+
+        return orderProductDiscountCouponStepDto
+    }
+
+    fun validateSagaCouponDtos(orderProductDiscountCouponStepDto: OrderProductDiscountCouponStepDto) {
+        val orderProductDiscountCouponDtos = orderProductDiscountCouponStepDto.orderProductDiscountCouponDtos
+
+        for(orderProductDiscountCouponDto in orderProductDiscountCouponDtos) {
+            if(orderProductDiscountCouponDto.state != "READY") {
+                continue
+            }
+
+            val optionalCoupon = couponByUserRepository.findById(orderProductDiscountCouponDto.couponByUserId)
+            if (optionalCoupon.isEmpty) {
+                orderProductDiscountCouponDto.state = "NotExistElementException"
+                continue
+            }
+
+            val selectedCoupon = optionalCoupon.get()
+
+            selectedCoupon.validateCouponDtoNotPublishException(orderProductDiscountCouponDto)
         }
     }
 
     /*
-     * SAGA 쿠폰 스텝 Revert
+     * SAGA 상품 할인 쿠폰 스텝 Revert
      */
     @Transactional(
         readOnly = false,
@@ -55,4 +77,14 @@ class CouponCommandService @Autowired constructor(
     fun revertProductDiscountCouponStep(orderProductDiscountCouponStepDto: OrderProductDiscountCouponStepDto) {
 
     }
+
+    /*
+     * SAGA 상품 할인 쿠폰 스텝 진행
+     * Logic:
+     */
+
+
+    /*
+     * SAGA 상품 할인 쿠폰 스텝 Revert
+     */
 }

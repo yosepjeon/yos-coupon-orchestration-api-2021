@@ -28,8 +28,8 @@ abstract class Coupon(
     open var productId: String,
     @Embedded
     open val couponDiscount: CouponDiscount,
-    @OneToMany(mappedBy = "coupon", fetch = FetchType.LAZY)
-    open val couponByUsers: List<CouponByUser>,
+//    @OneToMany(mappedBy = "coupon", fetch = FetchType.LAZY)
+//    open val couponByUsers: List<CouponByUser>,
     @Column(nullable = true)
     open var startTime: LocalDateTime,
     @Column(nullable = true)
@@ -54,5 +54,20 @@ abstract class Coupon(
             throw InvalidPriceException("가격이 0 미만입니다.")
         }
     }
+
+    fun validateCouponDtoNotPublishException(orderProductDiscountCouponDto: OrderProductDiscountCouponDto) {
+        if (this.couponDiscount.discountAmount != orderProductDiscountCouponDto.discountAmount) {
+            orderProductDiscountCouponDto.state = "NotEqualDiscountAmountException"
+        }
+
+        if (this.couponDiscount.discountPercent != orderProductDiscountCouponDto.discountPercent) {
+            orderProductDiscountCouponDto.state = "NotEqualDiscountPercentException"
+        }
+
+        if (orderProductDiscountCouponDto.totalPrice < 0) {
+            orderProductDiscountCouponDto.state = "InvalidPriceException"
+        }
+    }
+
 //    abstract fun use(t: T)
 }
