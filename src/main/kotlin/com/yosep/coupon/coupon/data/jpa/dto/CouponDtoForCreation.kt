@@ -13,7 +13,6 @@ data class CouponDtoForCreation(
 
     @field:Min(0)
     val couponStockVo: CouponStockVo,
-    @field:Min(0)
     val productId: String,
 
     val couponDiscountVo: CouponDiscountVo

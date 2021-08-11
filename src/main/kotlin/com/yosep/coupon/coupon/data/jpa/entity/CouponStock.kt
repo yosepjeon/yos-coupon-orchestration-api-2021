@@ -9,15 +9,20 @@ import javax.validation.constraints.NotNull
 @Embeddable
 class CouponStock(
     @field:Column(nullable = false)
-    private var total: @NotNull Long = 0,
+    var total: @NotNull Long = 0,
     @field:Column(nullable = false)
-    private var remain: @NotNull Long = 0
+    var remain: @NotNull Long = 0,
 ){
-    fun setRemain(remain: Long) {
-        validateStock(remain)
-        this.remain = remain
-        total = remain
+    fun a() {
+        println("total: $total")
+        println("remain: $remain")
     }
+
+//    fun setRemainValue(remain: Long) {
+//        validateStock(remain)
+//        this.remain = remain
+//        total = remain
+//    }
 
     fun addStock(value: Long) {
         validateStock(value)

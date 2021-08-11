@@ -9,30 +9,28 @@ import javax.validation.constraints.NotNull
 @Entity
 @DiscriminatorValue("Product")
 class ProductDiscountCoupon(
-    id: String,
+    couponId: String,
     name: @NotNull String,
-    state: @NotNull EditableState,
+    state: @NotNull EditableState?,
     couponStock: CouponStock,
     productId: String,
     couponDiscount: CouponDiscount,
-    couponByUsers: List<CouponByUser>,
-    startTime: LocalDateTime,
-    endTime: LocalDateTime,
+    startTime: LocalDateTime?,
+    endTime: LocalDateTime?,
 ) : Coupon(
-    id,
+    couponId,
     name,
     state,
     couponStock,
     productId,
     couponDiscount,
-    couponByUsers,
     startTime,
     endTime
 ) {
     override fun calculatePrice(orderProductDiscountCouponDto: OrderProductDiscountCouponDto): Long {
         validateCouponDto(orderProductDiscountCouponDto)
 
-        return couponDiscount.calculateProductPrice(orderProductDiscountCouponDto.totalPrice * orderProductDiscountCouponDto.productCount)
+        return couponDiscount!!.calculateProductPrice(orderProductDiscountCouponDto.totalPrice * orderProductDiscountCouponDto.productCount)
     }
 
     override fun getCoupon(orderProductDiscountCouponDto: OrderProductDiscountCouponDto) {

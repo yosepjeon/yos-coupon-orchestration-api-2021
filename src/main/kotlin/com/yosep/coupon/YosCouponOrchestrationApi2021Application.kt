@@ -2,7 +2,9 @@ package com.yosep.coupon
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
+import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker
 
+@EnableCircuitBreaker
 @SpringBootApplication
 class YosCouponOrchestrationApi2021Application
 

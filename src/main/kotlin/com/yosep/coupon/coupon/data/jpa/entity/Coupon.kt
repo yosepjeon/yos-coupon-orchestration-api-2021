@@ -21,7 +21,7 @@ abstract class Coupon(
     open var name: @NotNull String,
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    open var editableState: @NotNull EditableState = EditableState.OFF,
+    open var editableState: @NotNull EditableState? = EditableState.OFF,
     @Embedded
     open val couponStock: CouponStock,
     @Column
@@ -31,20 +31,20 @@ abstract class Coupon(
 //    @OneToMany(mappedBy = "coupon", fetch = FetchType.LAZY)
 //    open val couponByUsers: List<CouponByUser>,
     @Column(nullable = true)
-    open var startTime: LocalDateTime,
+    open var startTime: LocalDateTime?,
     @Column(nullable = true)
-    open var endTime: LocalDateTime
+    open var endTime: LocalDateTime?
 ) : BaseEntity() {
     abstract fun calculatePrice(orderProductDiscountCouponDto: OrderProductDiscountCouponDto): Long
     abstract fun getCoupon(orderProductDiscountCouponDto: OrderProductDiscountCouponDto)
 
     protected fun validateCouponDto(orderProductDiscountCouponDto: OrderProductDiscountCouponDto) {
-        if (this.couponDiscount.discountAmount != orderProductDiscountCouponDto.discountAmount) {
+        if (this.couponDiscount!!.discountAmount != orderProductDiscountCouponDto.discountAmount) {
             orderProductDiscountCouponDto.state = "NotEqualDiscountAmountException"
             throw NotEqualDiscountAmountException("할인 금액이 맞지않습니다.")
         }
 
-        if (this.couponDiscount.discountPercent != orderProductDiscountCouponDto.discountPercent) {
+        if (this.couponDiscount!!.discountPercent != orderProductDiscountCouponDto.discountPercent) {
             orderProductDiscountCouponDto.state = "NotEqualDiscountPercentException"
             throw NotEqualDiscountPercentException("할인 비율이 맞지않습니다.")
         }
@@ -56,11 +56,11 @@ abstract class Coupon(
     }
 
     fun validateCouponDtoNotPublishException(orderProductDiscountCouponDto: OrderProductDiscountCouponDto) {
-        if (this.couponDiscount.discountAmount != orderProductDiscountCouponDto.discountAmount) {
+        if (this.couponDiscount!!.discountAmount != orderProductDiscountCouponDto.discountAmount) {
             orderProductDiscountCouponDto.state = "NotEqualDiscountAmountException"
         }
 
-        if (this.couponDiscount.discountPercent != orderProductDiscountCouponDto.discountPercent) {
+        if (this.couponDiscount!!.discountPercent != orderProductDiscountCouponDto.discountPercent) {
             orderProductDiscountCouponDto.state = "NotEqualDiscountPercentException"
         }
 

@@ -15,11 +15,11 @@ class TotalPriceDiscountCoupon(
     couponStock: CouponStock,
     productId: String,
     couponDiscount: CouponDiscount,
-    couponByUsers: List<CouponByUser>,
+//    couponByUsers: List<CouponByUser>,
     startTime: LocalDateTime,
     endTime: LocalDateTime
 ) : Coupon(
-    id, name, state, couponStock, productId, couponDiscount, couponByUsers, startTime, endTime
+    id, name, state, couponStock, productId, couponDiscount, startTime, endTime
 ) {
     override fun calculatePrice(orderProductDiscountCouponDto: OrderProductDiscountCouponDto): Long {
         validateCouponDto(orderProductDiscountCouponDto)
