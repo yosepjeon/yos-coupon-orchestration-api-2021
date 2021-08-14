@@ -64,7 +64,7 @@ dependencies {
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-	implementation("org.springframework.cloud:spring-cloud-starter-netflix-hystrix")
+//	implementation("org.springframework.cloud:spring-cloud-starter-netflix-hystrix")
 	implementation("org.springframework.cloud:spring-cloud-bus")
 	implementation("org.springframework.cloud:spring-cloud-starter-config")
 	implementation("org.springframework.cloud:spring-cloud-stream")

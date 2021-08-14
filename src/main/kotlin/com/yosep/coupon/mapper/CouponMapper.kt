@@ -1,7 +1,12 @@
 package com.yosep.coupon.mapper
 
-import com.yosep.coupon.coupon.data.jpa.dto.CouponDtoForCreation
+import com.yosep.coupon.coupon.data.jpa.dto.ProductDiscountCouponDtoForCreation
+import com.yosep.coupon.coupon.data.jpa.dto.CreatedProductDiscountCouponDto
+import com.yosep.coupon.coupon.data.jpa.dto.CreatedTotalDiscountCouponDto
+import com.yosep.coupon.coupon.data.jpa.dto.TotalDiscountCouponDtoForCreation
+import com.yosep.coupon.coupon.data.jpa.entity.Coupon
 import com.yosep.coupon.coupon.data.jpa.entity.ProductDiscountCoupon
+import com.yosep.coupon.coupon.data.jpa.entity.TotalPriceDiscountCoupon
 import org.mapstruct.Mapper
 import org.mapstruct.Mapping
 import org.mapstruct.Mappings
@@ -17,7 +22,25 @@ interface CouponMapper {
         Mapping(target = "couponDiscount", source = "couponDiscountVo"),
         Mapping(target = "couponStock", source = "couponStockVo")
     )
-    fun couponDtoForCreationToProductDiscountCoupon(couponDtoForCreation: CouponDtoForCreation): ProductDiscountCoupon
+    fun dtoToEntity(dto: ProductDiscountCouponDtoForCreation): ProductDiscountCoupon
+
+    @Mappings(
+        Mapping(target = "couponDiscount", source = "couponDiscountVo"),
+        Mapping(target = "couponStock", source = "couponStockVo")
+    )
+    fun dtoToEntity(dto: TotalDiscountCouponDtoForCreation): TotalPriceDiscountCoupon
+
+    @Mappings(
+        Mapping(target = "couponDiscountVo", source = "couponDiscount"),
+        Mapping(target = "couponStockVo", source = "couponStock")
+    )
+    fun entityToDto(coupon: ProductDiscountCoupon): CreatedProductDiscountCouponDto
+
+    @Mappings(
+        Mapping(target = "couponDiscount", source = "couponDiscountVo"),
+        Mapping(target = "couponStock", source = "couponStockVo")
+    )
+    fun entityToDto(coupon: TotalPriceDiscountCoupon): CreatedTotalDiscountCouponDto
 }
 
 

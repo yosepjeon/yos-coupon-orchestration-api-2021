@@ -1,15 +1,26 @@
 package com.yosep.coupon.coupon.data.jpa.dto
 
-data class OrderProductDiscountCouponDto(
-    val dtype: String,
-    val couponByUserId: String,
-    val productCount: Long,
-    val userId: String,
-    val couponType: String,
-    val discountAmount: Long,
-    val discountPercent: Long,
+class OrderProductDiscountCouponDto(
+    dtype: String,
+    couponByUserId: String,
+    productCount: Long,
+    userId: String,
+    couponType: String,
+    discountAmount: Long,
+    discountPercent: Long,
     val productId: String,
-    val totalPrice: Long,
-    var calculatedPrice: Long,
-    var state: String = "READY"
+    totalPrice: Long,
+    calculatedPrice: Long,
+    state: String = "READY"
+) : OrderDiscountCouponDto(
+    dtype,
+    couponByUserId,
+    productCount,
+    userId,
+    couponType,
+    discountAmount,
+    discountPercent,
+    totalPrice,
+    calculatedPrice,
+    state
 )

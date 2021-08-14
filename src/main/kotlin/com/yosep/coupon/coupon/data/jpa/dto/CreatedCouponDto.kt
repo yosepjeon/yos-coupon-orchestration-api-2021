@@ -2,18 +2,11 @@
 //
 //import com.yosep.coupon.coupon.data.jpa.vo.CouponDiscountVo
 //import com.yosep.coupon.coupon.data.jpa.vo.CouponStockVo
-//import javax.validation.constraints.Min
-//import javax.validation.constraints.NotEmpty
 //
-//data class CouponDtoForCreation(
-//    var couponId: String,
-//
-//    @field:NotEmpty
+//data class CreatedCouponDto(
+//    val couponId: String,
 //    val name: String,
-//
-//    @field:Min(0)
 //    val couponStockVo: CouponStockVo,
-//    val productId: String,
-//
+//    val productId: String = "",
 //    val couponDiscountVo: CouponDiscountVo
 //)

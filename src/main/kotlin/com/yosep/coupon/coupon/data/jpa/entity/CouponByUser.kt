@@ -2,7 +2,7 @@ package com.yosep.coupon.coupon.data.jpa.entity
 
 import com.yosep.coupon.common.data.BaseEntity
 import com.yosep.coupon.common.exception.NoHasCouponException
-import com.yosep.coupon.coupon.data.jpa.dto.OrderProductDiscountCouponDto
+import com.yosep.coupon.coupon.data.jpa.dto.OrderDiscountCouponDto
 import javax.persistence.*
 import javax.validation.constraints.NotNull
 
@@ -26,31 +26,57 @@ class CouponByUser(
     @Enumerated(EnumType.STRING)
     private var state: CouponState = CouponState.READY
 ) : BaseEntity() {
-    fun use(orderProductDiscountCouponDto: OrderProductDiscountCouponDto): OrderProductDiscountCouponDto {
-        validateCouponDto(orderProductDiscountCouponDto)
+    fun use(orderDiscountCouponDto: OrderDiscountCouponDto): OrderDiscountCouponDto {
+        validateCouponDto(orderDiscountCouponDto)
         val coupon = this.coupon
 
-        orderProductDiscountCouponDto.calculatedPrice = coupon.calculatePrice(orderProductDiscountCouponDto)
+        orderDiscountCouponDto.calculatedPrice = coupon.calculatePrice(orderDiscountCouponDto)
         this.state = CouponState.COMP
 
-        return orderProductDiscountCouponDto
+        return orderDiscountCouponDto
     }
 
-    private fun validateCouponDto(orderProductDiscountCouponDto: OrderProductDiscountCouponDto) {
+    private fun validateCouponDto(orderDiscountCouponDto: OrderDiscountCouponDto) {
 
-        if (this.userId != orderProductDiscountCouponDto.userId) {
-            orderProductDiscountCouponDto.state = "NoHasCouponException"
-            throw NoHasCouponException("${orderProductDiscountCouponDto.userId}님은 해당 쿠폰을 가지고있지 않습니다.")
+        if (this.userId != orderDiscountCouponDto.userId) {
+            orderDiscountCouponDto.state = "NoHasCouponException"
+            throw NoHasCouponException("${orderDiscountCouponDto.userId}님은 해당 쿠폰을 가지고있지 않습니다.")
         }
     }
 
-    fun validateCouponDtoNotPublishException(orderProductDiscountCouponDto: OrderProductDiscountCouponDto) {
-        if (this.userId != orderProductDiscountCouponDto.userId) {
-            orderProductDiscountCouponDto.state = "NoHasCouponException"
+    fun validateCouponDtoNotPublishException(orderDiscountCouponDto: OrderDiscountCouponDto) {
+        if (this.userId != orderDiscountCouponDto.userId) {
+            orderDiscountCouponDto.state = "NoHasCouponException"
         }
 
-        coupon.validateCouponDtoNotPublishException(orderProductDiscountCouponDto)
+        coupon.validateCouponDtoNotPublishException(orderDiscountCouponDto)
     }
+
+//    fun use(orderTotalDiscountCouponDto: OrderTotalDiscountCouponDto): OrderProductDiscountCouponDto {
+//        validateCouponDto(orderTotalDiscountCouponDto)
+//        val coupon = this.coupon
+//
+//        orderProductDiscountCouponDto.calculatedPrice = coupon.calculatePrice(orderProductDiscountCouponDto)
+//        this.state = CouponState.COMP
+//
+//        return orderProductDiscountCouponDto
+//    }
+
+//    private fun validateCouponDto(orderProductDiscountCouponDto: OrderProductDiscountCouponDto) {
+//
+//        if (this.userId != orderProductDiscountCouponDto.userId) {
+//            orderProductDiscountCouponDto.state = "NoHasCouponException"
+//            throw NoHasCouponException("${orderProductDiscountCouponDto.userId}님은 해당 쿠폰을 가지고있지 않습니다.")
+//        }
+//    }
+
+//    fun validateCouponDtoNotPublishException(orderProductDiscountCouponDto: OrderProductDiscountCouponDto) {
+//        if (this.userId != orderProductDiscountCouponDto.userId) {
+//            orderProductDiscountCouponDto.state = "NoHasCouponException"
+//        }
+//
+//        coupon.validateCouponDtoNotPublishException(orderProductDiscountCouponDto)
+//    }
 }
 
 

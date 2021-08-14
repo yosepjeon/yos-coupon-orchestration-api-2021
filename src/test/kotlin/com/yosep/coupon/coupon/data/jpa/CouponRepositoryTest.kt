@@ -1,7 +1,7 @@
 package com.yosep.coupon.coupon.data.jpa
 
 import com.yosep.coupon.common.data.RandomIdGenerator
-import com.yosep.coupon.coupon.data.jpa.dto.CouponDtoForCreation
+import com.yosep.coupon.coupon.data.jpa.dto.ProductDiscountCouponDtoForCreation
 import com.yosep.coupon.coupon.data.jpa.vo.CouponDiscountVo
 import com.yosep.coupon.coupon.data.jpa.vo.CouponStockVo
 import com.yosep.coupon.data.jpa.repository.db.CouponRepository
@@ -11,7 +11,6 @@ import org.junit.jupiter.api.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpMethod
-import org.springframework.http.ResponseEntity
 import org.springframework.web.client.RestTemplate
 import javax.transaction.Transactional
 
@@ -36,7 +35,7 @@ class CouponRepositoryTest @Autowired constructor(
     fun 쿠폰_생성_테스트() {
         log.info("[Coupon Repository] 쿠폰 생성 테스트")
 
-        val couponDtoForCreation = CouponDtoForCreation(
+        val couponDtoForCreation = ProductDiscountCouponDtoForCreation(
             "",
             "coupon1",
             CouponStockVo(100, 100),
@@ -54,7 +53,7 @@ class CouponRepositoryTest @Autowired constructor(
 
         couponDtoForCreation.couponId = couponId
 
-        val couponForCreation = CouponMapper.INSTANCE.couponDtoForCreationToProductDiscountCoupon(couponDtoForCreation)
+        val couponForCreation = CouponMapper.INSTANCE.dtoToEntity(couponDtoForCreation)
 
         val createdCoupon = couponRepository.save(couponForCreation)
 
