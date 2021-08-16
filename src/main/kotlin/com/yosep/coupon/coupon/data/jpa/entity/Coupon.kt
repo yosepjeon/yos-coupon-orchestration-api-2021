@@ -12,11 +12,11 @@ import javax.validation.constraints.NotNull
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
-@DiscriminatorColumn(name = "DTYPE")
+@DiscriminatorColumn(name = "dtype")
 @Table(name = "yos_coupon")
 abstract class Coupon(
     @Id
-    @Column(length = 20)
+    @Column(length = 50)
     open val couponId: String,
     @Column(nullable = false)
     open var name: @NotNull String,
@@ -34,7 +34,9 @@ abstract class Coupon(
     @Column(nullable = true)
     open var startTime: LocalDateTime?,
     @Column(nullable = true)
-    open var endTime: LocalDateTime?
+    open var endTime: LocalDateTime?,
+    @Column(insertable = false, updatable = false) //읽기 전용으로 선언
+    open val dtype: String?
 ) : BaseEntity() {
 //    abstract fun calculatePrice(orderProductDiscountCouponDto: OrderProductDiscountCouponDto): Long
 //    abstract fun getCoupon(orderProductDiscountCouponDto: OrderProductDiscountCouponDto)

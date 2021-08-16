@@ -3,6 +3,7 @@ package com.yosep.coupon.coupon.service
 import com.yosep.coupon.common.data.RandomIdGenerator
 import com.yosep.coupon.common.exception.*
 import com.yosep.coupon.coupon.data.jpa.dto.*
+import com.yosep.coupon.coupon.data.jpa.entity.EditableState
 import com.yosep.coupon.coupon.data.jpa.repository.db.CouponByUserRepository
 import com.yosep.coupon.data.jpa.repository.db.CouponRepository
 import com.yosep.coupon.mapper.CouponMapper
@@ -15,6 +16,7 @@ import org.springframework.web.client.RestTemplate
 import javax.persistence.LockModeType
 
 @Service
+@Transactional(readOnly = false)
 class CouponCommandService @Autowired constructor(
     private val couponRepository: CouponRepository,
     private val couponByUserRepository: CouponByUserRepository,
@@ -39,6 +41,7 @@ class CouponCommandService @Autowired constructor(
         productDiscountCouponDtoForCreation.couponId = couponId
 
         val couponForCreation = CouponMapper.INSTANCE.dtoToEntity(productDiscountCouponDtoForCreation)
+        couponForCreation.editableState = EditableState.ON
 
         val createdCoupon = couponRepository.save(couponForCreation)
 
@@ -59,6 +62,7 @@ class CouponCommandService @Autowired constructor(
         totalDiscountCouponDtoForCreation.couponId = couponId
 
         val couponForCreation = CouponMapper.INSTANCE.dtoToEntity(totalDiscountCouponDtoForCreation)
+        couponForCreation.editableState = EditableState.ON
 
         val createdCoupon = couponRepository.save(couponForCreation)
 
@@ -67,7 +71,7 @@ class CouponCommandService @Autowired constructor(
 
     private fun checkIsPresentProduct(productId: String): Boolean? {
         val response = restTemplate.exchange(
-            "http://localhost:8001/products?id=test-product-category1-0",
+            "http://localhost:8001/products?id=$productId",
             HttpMethod.GET, null, Boolean::class.java
         )
 
@@ -145,7 +149,7 @@ class CouponCommandService @Autowired constructor(
             orderTotakDiscountCouponDto.state = "PENDING"
 
             val optionalCoupon = couponByUserRepository.findById(orderTotakDiscountCouponDto.couponByUserId)
-            if(optionalCoupon.isEmpty) {
+            if (optionalCoupon.isEmpty) {
                 orderTotakDiscountCouponDto.state = "NotExistElementException"
                 throw NotExistElementException(
                     orderTotakDiscountCouponDto.couponByUserId + " 해당 쿠폰이 존재하지 않습니다."
@@ -163,4 +167,31 @@ class CouponCommandService @Autowired constructor(
      * SAGA 전체 할인 쿠폰 스텝 Revert
      * Logic:
      */
+
+    /*
+    * 쿠폰 삭제
+     */
+    fun deleteCouponById(couponId: String) {
+        if(couponRepository.findById(couponId).isEmpty) {
+            return
+        }
+
+        couponRepository.deleteById(couponId)
+    }
+
+    fun createProductDiscountCouponForTest(couponDtoForCreation: ProductDiscountCouponDtoForCreation) {
+        if (checkIsPresentProduct(couponDtoForCreation.productId) != true) {
+            throw NotExistProductException("ID: ${couponDtoForCreation.productId} 상품이 존재하지 않습니다.")
+        }
+
+        val couponForCreation = CouponMapper.INSTANCE.dtoToEntity(couponDtoForCreation)
+        couponForCreation.editableState = EditableState.ON
+        couponRepository.save(couponForCreation)
+    }
+
+    fun createTotalDiscountCouponForTest(couponDtoForCreation: TotalDiscountCouponDtoForCreation) {
+        val couponForCreation = CouponMapper.INSTANCE.dtoToEntity(couponDtoForCreation)
+        couponForCreation.editableState = EditableState.ON
+        couponRepository.save(couponForCreation)
+    }
 }

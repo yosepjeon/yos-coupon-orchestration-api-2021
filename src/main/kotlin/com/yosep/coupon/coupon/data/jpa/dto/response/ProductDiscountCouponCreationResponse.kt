@@ -3,7 +3,7 @@ package com.yosep.coupon.coupon.data.jpa.dto.response
 import com.yosep.coupon.coupon.data.jpa.dto.CreatedProductDiscountCouponDto
 import org.springframework.hateoas.RepresentationModel
 
-class CouponCreationResponse(
+data class ProductDiscountCouponCreationResponse(
     val createdCouponDto: CreatedProductDiscountCouponDto
-): RepresentationModel<CouponCreationResponse>() {
+): RepresentationModel<ProductDiscountCouponCreationResponse>() {
 }

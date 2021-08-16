@@ -16,13 +16,14 @@ import javax.validation.constraints.NotNull
 class ProductDiscountCoupon(
     couponId: String,
     name: @NotNull String,
-    state: @NotNull EditableState?,
+    state: @NotNull EditableState? = EditableState.OFF,
     couponStock: CouponStock,
     @Column(nullable = false)
     val productId: String,
     couponDiscount: CouponDiscount,
     startTime: LocalDateTime?,
     endTime: LocalDateTime?,
+    dtype: String?
 ) : Coupon(
     couponId,
     name,
@@ -30,7 +31,8 @@ class ProductDiscountCoupon(
     couponStock,
     couponDiscount,
     startTime,
-    endTime
+    endTime,
+    dtype
 ) {
     override fun calculatePrice(OrderDiscountCouponDto: OrderDiscountCouponDto): Long {
         validateCouponDto(OrderDiscountCouponDto)

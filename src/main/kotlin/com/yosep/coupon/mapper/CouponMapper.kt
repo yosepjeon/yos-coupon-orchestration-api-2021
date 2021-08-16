@@ -37,8 +37,8 @@ interface CouponMapper {
     fun entityToDto(coupon: ProductDiscountCoupon): CreatedProductDiscountCouponDto
 
     @Mappings(
-        Mapping(target = "couponDiscount", source = "couponDiscountVo"),
-        Mapping(target = "couponStock", source = "couponStockVo")
+        Mapping(target = "couponDiscountVo", source = "couponDiscount"),
+        Mapping(target = "couponStockVo", source = "couponStock")
     )
     fun entityToDto(coupon: TotalPriceDiscountCoupon): CreatedTotalDiscountCouponDto
 }
