@@ -4,7 +4,6 @@ import com.yosep.coupon.common.exception.InvalidPriceException
 import com.yosep.coupon.common.exception.NotEqualDiscountAmountException
 import com.yosep.coupon.common.exception.NotEqualDiscountPercentException
 import com.yosep.coupon.coupon.data.jpa.dto.OrderDiscountCouponDto
-import com.yosep.coupon.coupon.data.jpa.dto.OrderProductDiscountCouponDto
 import java.time.LocalDateTime
 import javax.persistence.Column
 import javax.persistence.DiscriminatorValue
@@ -34,10 +33,10 @@ class ProductDiscountCoupon(
     endTime,
     dtype
 ) {
-    override fun calculatePrice(OrderDiscountCouponDto: OrderDiscountCouponDto): Long {
-        validateCouponDto(OrderDiscountCouponDto)
+    override fun calculatePrice(orderDiscountCouponDto: OrderDiscountCouponDto): Long {
+        validateCouponDto(orderDiscountCouponDto)
 
-        return couponDiscount!!.calculateProductPrice(OrderDiscountCouponDto.totalPrice * OrderDiscountCouponDto.productCount)
+        return couponDiscount!!.calculateProductPrice(orderDiscountCouponDto.totalPrice * orderDiscountCouponDto.productCount)
     }
 
     override fun getCoupon(OrderDiscountCouponDto: OrderDiscountCouponDto) {

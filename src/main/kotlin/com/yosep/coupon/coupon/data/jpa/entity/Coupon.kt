@@ -38,11 +38,6 @@ abstract class Coupon(
     @Column(insertable = false, updatable = false) //읽기 전용으로 선언
     open val dtype: String?
 ) : BaseEntity() {
-//    abstract fun calculatePrice(orderProductDiscountCouponDto: OrderProductDiscountCouponDto): Long
-//    abstract fun getCoupon(orderProductDiscountCouponDto: OrderProductDiscountCouponDto)
-//
-//    abstract fun validateCouponDto(orderProductDiscountCouponDto: OrderProductDiscountCouponDto)
-//    abstract fun validateCouponDtoNotPublishException(orderProductDiscountCouponDto: OrderProductDiscountCouponDto)
 
     abstract fun calculatePrice(orderDiscountCouponDto: OrderDiscountCouponDto): Long
     abstract fun getCoupon(orderDiscountCouponDto: OrderDiscountCouponDto)
@@ -50,5 +45,4 @@ abstract class Coupon(
     abstract fun validateCouponDto(orderDiscountCouponDto: OrderDiscountCouponDto)
     abstract fun validateCouponDtoNotPublishException(orderDiscountCouponDto: OrderDiscountCouponDto)
 
-//    abstract fun use(t: T)
 }

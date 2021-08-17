@@ -29,7 +29,7 @@ class TotalPriceDiscountCoupon(
     override fun calculatePrice(orderDiscountCouponDto: OrderDiscountCouponDto): Long {
         validateCouponDto(orderDiscountCouponDto)
 
-        return 0
+        return couponDiscount!!.calculateProductPrice(orderDiscountCouponDto.totalPrice)
     }
 
     override fun getCoupon(orderDiscountCouponDto: OrderDiscountCouponDto) {

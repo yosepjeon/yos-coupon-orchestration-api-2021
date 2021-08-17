@@ -69,15 +69,6 @@ class CouponCommandService @Autowired constructor(
         return CouponMapper.INSTANCE.entityToDto(createdCoupon)
     }
 
-    private fun checkIsPresentProduct(productId: String): Boolean? {
-        val response = restTemplate.exchange(
-            "http://localhost:8001/products?id=$productId",
-            HttpMethod.GET, null, Boolean::class.java
-        )
-
-        return response.body
-    }
-
     /*
      * SAGA 상품 할인 쿠폰 스텝 진행
      * Logic:
@@ -88,12 +79,14 @@ class CouponCommandService @Autowired constructor(
     )
     fun processProductDiscountCouponStep(orderProductDiscountCouponStepDto: OrderProductDiscountCouponStepDto): OrderProductDiscountCouponStepDto {
         val orderProductDiscountDtos = orderProductDiscountCouponStepDto.orderProductDiscountCouponDtos
+        orderProductDiscountCouponStepDto.state = "PENDING"
 
         orderProductDiscountDtos.forEach { orderProductDiscountCouponDto ->
             orderProductDiscountCouponDto.state = "PENDING"
 
             val optionalCoupon = couponByUserRepository.findById(orderProductDiscountCouponDto.couponByUserId)
             if (optionalCoupon.isEmpty) {
+                orderProductDiscountCouponStepDto.state = "EXCEPTION"
                 orderProductDiscountCouponDto.state = "NotExistElementException"
                 throw NotExistElementException(
                     orderProductDiscountCouponDto.couponByUserId + " 해당 쿠폰이 존재하지 않습니다."
@@ -105,10 +98,14 @@ class CouponCommandService @Autowired constructor(
             orderProductDiscountCouponDto.state = "COMP"
         }
 
+        if (orderProductDiscountCouponStepDto.state == "PENDING") {
+            orderProductDiscountCouponStepDto.state = "COMP"
+        }
+
         return orderProductDiscountCouponStepDto
     }
 
-    fun validateSagaCouponDtos(orderProductDiscountCouponStepDto: OrderProductDiscountCouponStepDto) {
+    fun validateSagaProductDiscountCouponDtos(orderProductDiscountCouponStepDto: OrderProductDiscountCouponStepDto) {
         val orderProductDiscountCouponDtos = orderProductDiscountCouponStepDto.orderProductDiscountCouponDtos
 
         for (orderProductDiscountCouponDto in orderProductDiscountCouponDtos) {
@@ -131,7 +128,26 @@ class CouponCommandService @Autowired constructor(
     /*
      * SAGA 상품 할인 쿠폰 스텝 Revert
      */
+    fun revertProductDiscountCouponStep(orderProductDiscountCouponStepDto: OrderProductDiscountCouponStepDto): OrderProductDiscountCouponStepDto {
+        val orderProductDiscountDtos = orderProductDiscountCouponStepDto.orderProductDiscountCouponDtos
+        orderProductDiscountCouponStepDto.state = "PENDING"
 
+        orderProductDiscountDtos.forEach { orderProductDiscountCouponDto ->
+            orderProductDiscountCouponDto.state = "REVERT-PENDING"
+
+            val optionalCoupon = couponByUserRepository.findById(orderProductDiscountCouponDto.couponByUserId)
+            if (optionalCoupon.isEmpty) {
+                orderProductDiscountCouponDto.state = "NotExistElementException"
+            } else {
+                val selectedCoupon = optionalCoupon.get()
+                selectedCoupon.revert()
+                orderProductDiscountCouponDto.state = "REVERTED"
+            }
+        }
+
+        orderProductDiscountCouponStepDto.state = "COMP"
+        return orderProductDiscountCouponStepDto
+    }
 
     /*
      * SAGA 전체 할인 쿠폰 스텝 진행
@@ -141,9 +157,9 @@ class CouponCommandService @Autowired constructor(
         readOnly = false,
 //        rollbackFor = [NotExistElementException::class, RuntimeException::class, NotEqualProductPrice::class, InvalidStockValueException::class],
     )
-    @Lock(value = LockModeType.PESSIMISTIC_WRITE)
-    fun processTotalDiscountCouponStep(orderTotalDiscountCouponStepDto: OrderTotalDiscountCouponStepDto) {
+    fun processTotalDiscountCouponStep(orderTotalDiscountCouponStepDto: OrderTotalDiscountCouponStepDto): OrderTotalDiscountCouponStepDto {
         val orderTotalDiscountDtos = orderTotalDiscountCouponStepDto.orderTotalDiscountCouponDtos
+        orderTotalDiscountCouponStepDto.state = "PENDING"
 
         orderTotalDiscountDtos.forEach { orderTotakDiscountCouponDto ->
             orderTotakDiscountCouponDto.state = "PENDING"
@@ -151,15 +167,22 @@ class CouponCommandService @Autowired constructor(
             val optionalCoupon = couponByUserRepository.findById(orderTotakDiscountCouponDto.couponByUserId)
             if (optionalCoupon.isEmpty) {
                 orderTotakDiscountCouponDto.state = "NotExistElementException"
+                orderTotalDiscountCouponStepDto.state = "EXCEPTION"
                 throw NotExistElementException(
                     orderTotakDiscountCouponDto.couponByUserId + " 해당 쿠폰이 존재하지 않습니다."
                 )
             }
 
             val selectedCoupon = optionalCoupon.get()
-//            selectedCoupon.use(orderTotakDiscountCouponDto)
+            selectedCoupon.use(orderTotakDiscountCouponDto)
             orderTotakDiscountCouponDto.state = "COMP"
         }
+
+        if (orderTotalDiscountCouponStepDto.state == "PENDING") {
+            orderTotalDiscountCouponStepDto.state = "COMP"
+        }
+
+        return orderTotalDiscountCouponStepDto
     }
 
 
@@ -167,12 +190,30 @@ class CouponCommandService @Autowired constructor(
      * SAGA 전체 할인 쿠폰 스텝 Revert
      * Logic:
      */
+    fun revertTotalDiscountCouponStep(orderTotalDiscountCouponStepDto: OrderTotalDiscountCouponStepDto): OrderTotalDiscountCouponStepDto {
+        val orderTotalDiscountDtos = orderTotalDiscountCouponStepDto.orderTotalDiscountCouponDtos
+
+        orderTotalDiscountDtos.forEach { orderTotalDiscountDto ->
+            orderTotalDiscountDto.state = "REVERT-PENDING"
+
+            val optionalCoupon = couponByUserRepository.findById(orderTotalDiscountDto.couponByUserId)
+            if (optionalCoupon.isEmpty) {
+                orderTotalDiscountDto.state = "NotExistElementException"
+            } else {
+                val selectedCoupon = optionalCoupon.get()
+                selectedCoupon.revert()
+                orderTotalDiscountDto.state = "REVERTED"
+            }
+        }
+
+        return orderTotalDiscountCouponStepDto
+    }
 
     /*
     * 쿠폰 삭제
      */
     fun deleteCouponById(couponId: String) {
-        if(couponRepository.findById(couponId).isEmpty) {
+        if (couponRepository.findById(couponId).isEmpty) {
             return
         }
 
@@ -193,5 +234,14 @@ class CouponCommandService @Autowired constructor(
         val couponForCreation = CouponMapper.INSTANCE.dtoToEntity(couponDtoForCreation)
         couponForCreation.editableState = EditableState.ON
         couponRepository.save(couponForCreation)
+    }
+
+    private fun checkIsPresentProduct(productId: String): Boolean? {
+        val response = restTemplate.exchange(
+            "http://localhost:8001/products?id=$productId",
+            HttpMethod.GET, null, Boolean::class.java
+        )
+
+        return response.body
     }
 }
