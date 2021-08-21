@@ -28,7 +28,17 @@ class CouponQueryService @Autowired constructor(
     }
 
     /*
-    *
+    * 전체 쿠폰 조회
      */
+    fun findAllCoupons() {
+
+    }
+
+    /*
+    * 회사 별 쿠폰 조회
+     */
+    fun findCouponsByCompany() {
+
+    }
 
 }

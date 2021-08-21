@@ -25,6 +25,8 @@ class CouponController @Autowired constructor(
     private val couponCommandService: CouponCommandService,
     private val couponQueryService: CouponQueryService
 ) {
+
+
     @PostMapping("/product")
     fun createProductDiscountCoupon(@RequestBody @Valid couponDtoForCreation: ProductDiscountCouponDtoForCreation, errors:Errors): ResponseEntity<*> {
         if(errors.hasErrors()) {

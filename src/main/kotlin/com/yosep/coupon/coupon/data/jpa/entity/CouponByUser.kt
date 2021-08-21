@@ -12,17 +12,14 @@ import javax.validation.constraints.NotNull
 class CouponByUser(
     @Id
     @Column(length = 20)
-    private val id: String,
+    val id: String,
     @Column(nullable = false)
-    private val userId: String,
+    val userId: String,
     @ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
     @JoinColumn(name = "coupon_id", nullable = true)
-    private val coupon: Coupon,
+    val coupon: Coupon,
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private val editableState: @NotNull EditableState = EditableState.OFF,
-    @Enumerated(EnumType.STRING)
-    private var state: CouponState = CouponState.READY
+    var state: CouponState = CouponState.READY
 ) : BaseEntity() {
     fun use(orderDiscountCouponDto: OrderDiscountCouponDto): OrderDiscountCouponDto {
         if(this.state != CouponState.READY) {

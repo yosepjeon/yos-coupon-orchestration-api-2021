@@ -25,8 +25,6 @@ abstract class Coupon(
     open var editableState: @NotNull EditableState? = EditableState.OFF,
     @Embedded
     open val couponStock: CouponStock,
-//    @Column
-//    open var productId: String,
     @Embedded
     open val couponDiscount: CouponDiscount,
 //    @OneToMany(mappedBy = "coupon", fetch = FetchType.LAZY)

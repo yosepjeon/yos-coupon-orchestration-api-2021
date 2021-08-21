@@ -1,7 +1,6 @@
-package com.yosep.coupon.coupon.mq
+package com.yosep.coupon.coupon.mq.consumer
 
 import com.yosep.coupon.coupon.service.CouponCommandService
-import lombok.RequiredArgsConstructor
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.stereotype.Service
@@ -9,7 +8,7 @@ import java.io.IOException
 
 
 @Service
-class KafkaCouponConsumer @Autowired constructor(
+class ConsumerFromProduct @Autowired constructor(
     private val couponCommandService: CouponCommandService
 ) {
 
@@ -18,4 +17,6 @@ class KafkaCouponConsumer @Autowired constructor(
     fun consume(message: String) {
         println(String.format("Consumed message : %s", message))
     }
+
+
 }
