@@ -14,5 +14,8 @@ class CouponByUserQueryService @Autowired constructor(
     private val couponByUserRepository: CouponByUserRepository,
     private val restTemplate: RestTemplate
 ){
-
+    @Transactional(readOnly =  true)
+    fun getCouponsByUser(userId: String) {
+//        couponByUserRepository.findB
+    }
 }

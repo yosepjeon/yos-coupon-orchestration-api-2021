@@ -19,6 +19,8 @@ import org.springframework.web.client.RestTemplate
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores::class)
 class CouponByUserCommandServiceTest @Autowired constructor(
     private val couponCommandService: CouponCommandService,
+    private val productDiscountCouponCommandService: ProductDiscountCouponCommandService,
+    private val totalDiscountCouponCommandService: TotalDiscountCouponCommandService,
     private val couponByUserCommandService: CouponByUserCommandService,
     private val restTemplate: RestTemplate
 ) {
@@ -62,9 +64,9 @@ class CouponByUserCommandServiceTest @Autowired constructor(
             )
         )
 
-        val createdCoupon1 = couponCommandService.createProductDiscountCoupon(couponDtoForCreation1)
-        val createdCoupon2 = couponCommandService.createProductDiscountCoupon(couponDtoForCreation2)
-        val createdCoupon3 = couponCommandService.createTotalDiscountCoupon(couponDtoForCreation3)
+        val createdCoupon1 = productDiscountCouponCommandService.createProductDiscountCoupon(couponDtoForCreation1)
+        val createdCoupon2 = productDiscountCouponCommandService.createProductDiscountCoupon(couponDtoForCreation2)
+        val createdCoupon3 = totalDiscountCouponCommandService.createTotalDiscountCoupon(couponDtoForCreation3)
         couponId1 = createdCoupon1.couponId
         couponId2 = createdCoupon2.couponId
         couponId3 = createdCoupon3.couponId

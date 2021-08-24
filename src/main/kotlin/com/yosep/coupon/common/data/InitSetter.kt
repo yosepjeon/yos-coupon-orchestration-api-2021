@@ -6,6 +6,8 @@ import com.yosep.coupon.coupon.data.jpa.entity.EditableState
 import com.yosep.coupon.coupon.data.jpa.vo.CouponDiscountVo
 import com.yosep.coupon.coupon.data.jpa.vo.CouponStockVo
 import com.yosep.coupon.coupon.service.CouponCommandService
+import com.yosep.coupon.coupon.service.ProductDiscountCouponCommandService
+import com.yosep.coupon.coupon.service.TotalDiscountCouponCommandService
 import com.yosep.coupon.data.jpa.repository.db.CouponRepository
 import com.yosep.coupon.mapper.CouponMapper
 import org.springframework.beans.factory.annotation.Autowired
@@ -18,7 +20,9 @@ import java.util.*
 @Component
 class InitSetter @Autowired constructor(
     private val couponRepository: CouponRepository,
-    private val couponCommandService: CouponCommandService
+    private val couponCommandService: CouponCommandService,
+    private val productDiscountCouponCommandService: ProductDiscountCouponCommandService,
+    private val totalDiscountCouponCommandService: TotalDiscountCouponCommandService
 ) : CommandLineRunner {
     override fun run(vararg args: String?) {
         deleteTestData()
@@ -41,7 +45,7 @@ class InitSetter @Autowired constructor(
                 )
             )
 
-            couponCommandService.createProductDiscountCouponForTest(couponDtoForCreation)
+            productDiscountCouponCommandService.createProductDiscountCouponForTest(couponDtoForCreation)
         }
 
         // 상품 비율 할인
@@ -57,7 +61,7 @@ class InitSetter @Autowired constructor(
                 )
             )
 
-            couponCommandService.createProductDiscountCouponForTest(couponDtoForCreation)
+            productDiscountCouponCommandService.createProductDiscountCouponForTest(couponDtoForCreation)
         }
 
         var totalDiscountcouponDtoForCreation: TotalDiscountCouponDtoForCreation
@@ -73,7 +77,7 @@ class InitSetter @Autowired constructor(
                 )
             )
 
-            couponCommandService.createTotalDiscountCouponForTest(totalDiscountcouponDtoForCreation)
+            totalDiscountCouponCommandService.createTotalDiscountCouponForTest(totalDiscountcouponDtoForCreation)
         }
 
         // 전체 퍼센트 할인 쿠폰 3개
@@ -88,7 +92,7 @@ class InitSetter @Autowired constructor(
                 )
             )
 
-            couponCommandService.createTotalDiscountCouponForTest(totalDiscountcouponDtoForCreation)
+            totalDiscountCouponCommandService.createTotalDiscountCouponForTest(totalDiscountcouponDtoForCreation)
         }
     }
 

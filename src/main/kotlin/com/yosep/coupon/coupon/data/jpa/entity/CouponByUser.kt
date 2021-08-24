@@ -21,6 +21,8 @@ class CouponByUser(
     @Enumerated(EnumType.STRING)
     var state: CouponState = CouponState.READY
 ) : BaseEntity() {
+    fun getCouponByUserId(): String = this.id
+
     fun use(orderDiscountCouponDto: OrderDiscountCouponDto): OrderDiscountCouponDto {
         if(this.state != CouponState.READY) {
             // exception

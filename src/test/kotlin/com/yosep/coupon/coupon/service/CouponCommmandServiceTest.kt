@@ -13,7 +13,9 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores::class)
 class CouponCommmandServiceTest @Autowired constructor(
-    private val couponCommandService: CouponCommandService
+    private val couponCommandService: CouponCommandService,
+    private val productDiscountCouponCommandService: ProductDiscountCouponCommandService,
+    private val totalDiscountCouponCommandService: TotalDiscountCouponCommandService
 ) {
     private val log = Slf4JLoggerFactory.getInstance(CouponCommmandServiceTest::class.java)
 
@@ -33,7 +35,7 @@ class CouponCommmandServiceTest @Autowired constructor(
             )
         )
 
-        val createdCoupon = couponCommandService.createProductDiscountCoupon(couponDtoForCreation)
+        val createdCoupon = productDiscountCouponCommandService.createProductDiscountCoupon(couponDtoForCreation)
 
         Assertions.assertEquals(createdCoupon.name, couponDtoForCreation.name)
         Assertions.assertEquals(createdCoupon.productId, couponDtoForCreation.productId)
