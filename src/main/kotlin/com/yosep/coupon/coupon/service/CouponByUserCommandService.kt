@@ -22,7 +22,6 @@ class CouponByUserCommandService @Autowired constructor(
     private val couponByUserRepository: CouponByUserRepository,
     private val restTemplate: RestTemplate
 ) {
-
     @Transactional(
         readOnly = false,
         rollbackFor = [RuntimeException::class, NotExistElementException::class]
