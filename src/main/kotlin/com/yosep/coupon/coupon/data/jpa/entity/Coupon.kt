@@ -34,7 +34,9 @@ abstract class Coupon(
     @Column(nullable = true)
     open var endTime: LocalDateTime?,
     @Column(insertable = false, updatable = false) //읽기 전용으로 선언
-    open val dtype: String?
+    open val dtype: String?,
+    @Enumerated(EnumType.STRING)
+    open var state: CouponState? = CouponState.READY
 ) : BaseEntity() {
 
     abstract fun calculatePrice(orderDiscountCouponDto: OrderDiscountCouponDto): Long

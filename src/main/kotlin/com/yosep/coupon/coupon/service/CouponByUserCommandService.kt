@@ -41,9 +41,14 @@ class CouponByUserCommandService @Autowired constructor(
             throw NotExistElementException("쿠폰이 존재하지 않습니다.")
         }
 
-        var id = RandomIdGenerator.generate()
-        while (couponByUserRepository.findById(id).isPresent) {
+        var id = ""
+        if(couponByUserCreationDto.id == "" || couponByUserCreationDto.id.isEmpty()) {
             id = RandomIdGenerator.generate()
+            while (couponByUserRepository.findById(id).isPresent) {
+                id = RandomIdGenerator.generate()
+            }
+        }else {
+            id = couponByUserCreationDto.id
         }
 
         val selectedCoupon = optionalCoupon.get()
@@ -57,5 +62,9 @@ class CouponByUserCommandService @Autowired constructor(
         selectedCoupon.couponStock.decrease(1)
 
         return couponByUserRepository.save(couponByUser)
+    }
+
+    fun deleteCouponByUser(id: String) {
+        couponByUserRepository.deleteById(id)
     }
 }

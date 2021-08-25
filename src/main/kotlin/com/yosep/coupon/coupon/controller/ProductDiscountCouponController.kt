@@ -1,5 +1,6 @@
 package com.yosep.coupon.coupon.controller
 
+import com.yosep.coupon.common.exception.NotExistElementException
 import com.yosep.coupon.coupon.data.jpa.dto.OrderProductDiscountCouponStepDto
 import com.yosep.coupon.coupon.data.jpa.dto.ProductDiscountCouponDtoForCreation
 import com.yosep.coupon.coupon.data.jpa.dto.response.ProductDiscountCouponCreationResponse
@@ -38,7 +39,7 @@ class ProductDiscountCouponController @Autowired constructor(
             val response = ProductDiscountCouponCreationResponse(createdCouponDto)
 
             return ResponseEntity.ok(response)
-        }catch (rex: RuntimeException) {
+        } catch (rex: RuntimeException) {
             return ResponseEntity.ok(rex)
         }
 //        response.add(linkTo(methodOn(CouponController::class.java).createProductDiscountCoupon(couponDtoForCreation,errors)).withRel("insert-coupon"))
@@ -55,10 +56,11 @@ class ProductDiscountCouponController @Autowired constructor(
         return if (errors.hasErrors()) {
             ResponseEntity.badRequest().body(errors)
         } else try {
-//            productDiscountCouponCommandService
+            productDiscountCouponCommandService.processProductDiscountCouponStep(orderProductDiscountCouponStepDto)
 
             ResponseEntity.ok()
         } catch (runtimeException: RuntimeException) {
+            orderProductDiscountCouponStepDto.state = "EXCEPTION"
             ResponseEntity.ok()
         } as ResponseEntity<*>
     }

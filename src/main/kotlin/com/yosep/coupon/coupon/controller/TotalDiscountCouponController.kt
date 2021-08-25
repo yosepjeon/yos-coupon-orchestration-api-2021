@@ -50,6 +50,7 @@ class TotalDiscountCouponController @Autowired constructor(
         } else try {
             ResponseEntity.ok()
         } catch (runtimeException: RuntimeException) {
+            orderTotalDiscountCouponStepDto.state = "EXCEPTION"
             ResponseEntity.ok()
         } as ResponseEntity<*>
     }

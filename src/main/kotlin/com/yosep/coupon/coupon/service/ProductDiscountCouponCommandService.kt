@@ -4,9 +4,12 @@ import com.yosep.coupon.common.data.RandomIdGenerator
 import com.yosep.coupon.common.exception.NotExistElementException
 import com.yosep.coupon.common.exception.NotExistProductException
 import com.yosep.coupon.coupon.data.jpa.dto.CreatedProductDiscountCouponDto
+import com.yosep.coupon.coupon.data.jpa.dto.OrderProductDiscountCouponDto
 import com.yosep.coupon.coupon.data.jpa.dto.OrderProductDiscountCouponStepDto
 import com.yosep.coupon.coupon.data.jpa.dto.ProductDiscountCouponDtoForCreation
+import com.yosep.coupon.coupon.data.jpa.entity.CouponState
 import com.yosep.coupon.coupon.data.jpa.entity.EditableState
+import com.yosep.coupon.coupon.data.jpa.repository.db.CouponByUserRepository
 import com.yosep.coupon.data.jpa.repository.db.CouponRepository
 import com.yosep.coupon.mapper.CouponMapper
 import org.springframework.beans.factory.annotation.Autowired
@@ -19,7 +22,7 @@ import org.springframework.web.client.RestTemplate
 @Transactional(readOnly = false)
 class ProductDiscountCouponCommandService @Autowired constructor(
     private val couponRepository: CouponRepository,
-    private val couponByUserRepository: CouponRepository,
+    private val couponByUserRepository: CouponByUserRepository,
     private val restTemplate: RestTemplate
 ) {
     /*
@@ -54,22 +57,32 @@ class ProductDiscountCouponCommandService @Autowired constructor(
 
         val couponForCreation = CouponMapper.INSTANCE.dtoToEntity(couponDtoForCreation)
         couponForCreation.editableState = EditableState.ON
+        couponForCreation.state = CouponState.READY
         couponRepository.save(couponForCreation)
     }
 
-    fun processProductDiscountCouponStep(orderProductDiscountCouponStepDto: OrderProductDiscountCouponStepDto) {
+    @Transactional(readOnly = false)
+    fun processProductDiscountCouponStep(orderProductDiscountCouponStepDto: OrderProductDiscountCouponStepDto): OrderProductDiscountCouponStepDto {
         val orderProductDiscountCouponDtos = orderProductDiscountCouponStepDto.orderProductDiscountCouponDtos
-        orderProductDiscountCouponStepDto.state = "READY"
+        orderProductDiscountCouponStepDto.state = "PENDING"
 
         orderProductDiscountCouponDtos.forEach { orderProductDiscountCouponDto ->
             orderProductDiscountCouponDto.state = "PENDING"
 
-//            val optionalCouponByUser = couponBy
+            val optionalCouponByUser = couponByUserRepository.findByUserId(orderProductDiscountCouponDto.userId)
 
-            throw NotExistElementException("해당 쿠폰이 존재하지 않습니다.")
+            if (optionalCouponByUser.isEmpty) {
+                orderProductDiscountCouponDto.state = "NotExistElementException"
+                orderProductDiscountCouponStepDto.state = "EXCEPTION"
+                throw NotExistElementException("해당 쿠폰이 존재하지 않습니다.")
+            }
+
+            val selectedCouponByUser = optionalCouponByUser.get()
+            selectedCouponByUser.use(orderProductDiscountCouponDto)
         }
 
-
+        orderProductDiscountCouponStepDto.state = "COMP"
+        return orderProductDiscountCouponStepDto
     }
 
     private fun checkIsPresentProduct(productId: String): Boolean? {

@@ -4,8 +4,6 @@ import com.yosep.coupon.common.exception.InvalidPriceException
 import com.yosep.coupon.common.exception.NotEqualDiscountAmountException
 import com.yosep.coupon.common.exception.NotEqualDiscountPercentException
 import com.yosep.coupon.coupon.data.jpa.dto.OrderDiscountCouponDto
-import com.yosep.coupon.coupon.data.jpa.dto.OrderProductDiscountCouponDto
-import com.yosep.coupon.coupon.data.jpa.dto.OrderTotalDiscountCouponDto
 import java.time.LocalDateTime
 import javax.persistence.DiscriminatorValue
 import javax.persistence.Entity
@@ -16,15 +14,16 @@ import javax.validation.constraints.NotNull
 class TotalPriceDiscountCoupon(
     couponId: String,
     name: @NotNull String,
-    state: @NotNull EditableState? = EditableState.OFF,
+    editableState: @NotNull EditableState? = EditableState.OFF,
     couponStock: CouponStock,
     couponDiscount: CouponDiscount,
 //    couponByUsers: List<CouponByUser>,
     startTime: LocalDateTime?,
     endTime: LocalDateTime?,
-    dtype: String?
+    dtype: String?,
+    state: CouponState?
 ) : Coupon(
-    couponId, name, state, couponStock, couponDiscount, startTime, endTime, dtype
+    couponId, name, editableState, couponStock, couponDiscount, startTime, endTime, dtype, state
 ) {
     override fun calculatePrice(orderDiscountCouponDto: OrderDiscountCouponDto): Long {
         validateCouponDto(orderDiscountCouponDto)

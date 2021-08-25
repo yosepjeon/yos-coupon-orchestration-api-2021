@@ -3,6 +3,7 @@ package com.yosep.coupon.coupon.service
 import com.yosep.coupon.common.data.RandomIdGenerator
 import com.yosep.coupon.coupon.data.jpa.dto.CreatedTotalDiscountCouponDto
 import com.yosep.coupon.coupon.data.jpa.dto.TotalDiscountCouponDtoForCreation
+import com.yosep.coupon.coupon.data.jpa.entity.CouponState
 import com.yosep.coupon.coupon.data.jpa.entity.EditableState
 import com.yosep.coupon.data.jpa.repository.db.CouponRepository
 import com.yosep.coupon.mapper.CouponMapper
@@ -41,6 +42,7 @@ class TotalDiscountCouponCommandService @Autowired constructor(
     fun createTotalDiscountCouponForTest(couponDtoForCreation: TotalDiscountCouponDtoForCreation) {
         val couponForCreation = CouponMapper.INSTANCE.dtoToEntity(couponDtoForCreation)
         couponForCreation.editableState = EditableState.ON
+        couponForCreation.state = CouponState.READY
         couponRepository.save(couponForCreation)
     }
 }

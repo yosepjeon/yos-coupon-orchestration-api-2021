@@ -1,6 +1,7 @@
 package com.yosep.coupon.coupon.data.jpa.entity
 
 import com.yosep.coupon.common.data.BaseEntity
+import com.yosep.coupon.common.exception.AlreadyUsedException
 import com.yosep.coupon.common.exception.NoHasCouponException
 import com.yosep.coupon.coupon.data.jpa.dto.OrderDiscountCouponDto
 import java.lang.RuntimeException
@@ -24,9 +25,12 @@ class CouponByUser(
     fun getCouponByUserId(): String = this.id
 
     fun use(orderDiscountCouponDto: OrderDiscountCouponDto): OrderDiscountCouponDto {
+        this.state = CouponState.PENDING
         if(this.state != CouponState.READY) {
             // exception
-            throw RuntimeException("이미 사용한 쿠폰입니다.")
+            orderDiscountCouponDto.state = "AlreadyUsedException"
+            this.state = CouponState.READY
+            throw AlreadyUsedException("이미 사용한 쿠폰입니다.")
         }
 
         validateCouponDto(orderDiscountCouponDto)
@@ -34,6 +38,7 @@ class CouponByUser(
 
         orderDiscountCouponDto.calculatedPrice = coupon.calculatePrice(orderDiscountCouponDto)
         this.state = CouponState.COMP
+        orderDiscountCouponDto.state = "COMP"
 
         return orderDiscountCouponDto
     }

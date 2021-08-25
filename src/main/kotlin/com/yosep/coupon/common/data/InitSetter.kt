@@ -1,10 +1,12 @@
 package com.yosep.coupon.common.data
 
+import com.yosep.coupon.coupon.data.jpa.dto.CouponByUserCreationDto
 import com.yosep.coupon.coupon.data.jpa.dto.ProductDiscountCouponDtoForCreation
 import com.yosep.coupon.coupon.data.jpa.dto.TotalDiscountCouponDtoForCreation
 import com.yosep.coupon.coupon.data.jpa.entity.EditableState
 import com.yosep.coupon.coupon.data.jpa.vo.CouponDiscountVo
 import com.yosep.coupon.coupon.data.jpa.vo.CouponStockVo
+import com.yosep.coupon.coupon.service.CouponByUserCommandService
 import com.yosep.coupon.coupon.service.CouponCommandService
 import com.yosep.coupon.coupon.service.ProductDiscountCouponCommandService
 import com.yosep.coupon.coupon.service.TotalDiscountCouponCommandService
@@ -22,7 +24,8 @@ class InitSetter @Autowired constructor(
     private val couponRepository: CouponRepository,
     private val couponCommandService: CouponCommandService,
     private val productDiscountCouponCommandService: ProductDiscountCouponCommandService,
-    private val totalDiscountCouponCommandService: TotalDiscountCouponCommandService
+    private val totalDiscountCouponCommandService: TotalDiscountCouponCommandService,
+    private val couponByUserCommandService: CouponByUserCommandService
 ) : CommandLineRunner {
     override fun run(vararg args: String?) {
         deleteTestData()
@@ -93,6 +96,51 @@ class InitSetter @Autowired constructor(
             )
 
             totalDiscountCouponCommandService.createTotalDiscountCouponForTest(totalDiscountcouponDtoForCreation)
+        }
+
+        val userId = "user-admin-for-test"
+        // 유저 상품 금액 할인 쿠폰 할당 3개
+        for(i in 1..3) {
+            val couponByUserCreationDto = CouponByUserCreationDto(
+                "own-product-amount-coupon-test$i",
+                "user-admin-for-test",
+                "coupon-product-amount-test$i"
+            )
+
+            couponByUserCommandService.ownCoupon(couponByUserCreationDto)
+        }
+
+        // 유저 상품 비율 할인 쿠폰 할당 3개
+        for(i in 1..2) {
+            val couponByUserCreationDto = CouponByUserCreationDto(
+                "own-product-percent-coupon-test$i",
+                "user-admin-for-test",
+                "coupon-product-percent-test$i"
+            )
+
+            couponByUserCommandService.ownCoupon(couponByUserCreationDto)
+        }
+
+        // 유저 전체 비율 할인 쿠폰 할당 3개
+        for(i in 1..3) {
+            val couponByUserCreationDto = CouponByUserCreationDto(
+                "own-total-amount-coupon-test$i",
+                "user-admin-for-test",
+                "coupon-total-percent-test$i"
+            )
+
+            couponByUserCommandService.ownCoupon(couponByUserCreationDto)
+        }
+
+        // 유저 전체 비율 할인 쿠폰 할당 3개
+        for(i in 1..3) {
+            val couponByUserCreationDto = CouponByUserCreationDto(
+                "own-total-percent-coupon-test$i",
+                "user-admin-for-test",
+                "coupon-total-amount-test$i"
+            )
+
+            couponByUserCommandService.ownCoupon(couponByUserCreationDto)
         }
     }
 
