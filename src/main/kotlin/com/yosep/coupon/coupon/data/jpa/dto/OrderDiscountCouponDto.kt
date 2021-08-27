@@ -5,7 +5,6 @@ open class OrderDiscountCouponDto(
     open val couponByUserId: String,
     open val productCount: Long,
     open val userId: String,
-    open val couponType: String,
     open val discountAmount: Long,
     open val discountPercent: Long,
     open val totalPrice: Long,

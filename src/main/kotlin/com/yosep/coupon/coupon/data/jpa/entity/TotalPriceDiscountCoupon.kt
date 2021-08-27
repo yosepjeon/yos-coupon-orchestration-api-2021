@@ -17,13 +17,22 @@ class TotalPriceDiscountCoupon(
     editableState: @NotNull EditableState? = EditableState.OFF,
     couponStock: CouponStock,
     couponDiscount: CouponDiscount,
-//    couponByUsers: List<CouponByUser>,
+    couponByUsers: List<CouponByUser>?,
     startTime: LocalDateTime?,
     endTime: LocalDateTime?,
     dtype: String?,
     state: CouponState?
 ) : Coupon(
-    couponId, name, editableState, couponStock, couponDiscount, startTime, endTime, dtype, state
+    couponId,
+    name,
+    editableState,
+    couponStock,
+    couponDiscount,
+    couponByUsers,
+    startTime,
+    endTime,
+    dtype,
+    state
 ) {
     override fun calculatePrice(orderDiscountCouponDto: OrderDiscountCouponDto): Long {
         validateCouponDto(orderDiscountCouponDto)

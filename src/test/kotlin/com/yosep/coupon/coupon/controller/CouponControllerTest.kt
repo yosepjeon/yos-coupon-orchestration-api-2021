@@ -1,6 +1,7 @@
 package com.yosep.coupon.coupon.controller
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.yosep.coupon.common.exception.NoHasCouponException
 import com.yosep.coupon.coupon.data.jpa.dto.ProductDiscountCouponDtoForCreation
 import com.yosep.coupon.coupon.data.jpa.dto.TotalDiscountCouponDtoForCreation
 import com.yosep.coupon.coupon.data.jpa.vo.CouponDiscountVo
@@ -23,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional
 
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
+import java.lang.RuntimeException
 
 
 @SpringBootTest

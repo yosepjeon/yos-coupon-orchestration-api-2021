@@ -27,8 +27,8 @@ abstract class Coupon(
     open val couponStock: CouponStock,
     @Embedded
     open val couponDiscount: CouponDiscount,
-//    @OneToMany(mappedBy = "coupon", fetch = FetchType.LAZY)
-//    open val couponByUsers: List<CouponByUser>,
+    @OneToMany(mappedBy = "coupon", fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+    open val couponByUsers: List<CouponByUser>? = emptyList(),
     @Column(nullable = true)
     open var startTime: LocalDateTime?,
     @Column(nullable = true)

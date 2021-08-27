@@ -1,6 +1,9 @@
 package com.yosep.coupon.coupon.controller
 
+import com.yosep.coupon.common.exception.AlreadyUsedException
+import com.yosep.coupon.common.exception.ExpireCouponException
 import com.yosep.coupon.common.exception.NotExistElementException
+import com.yosep.coupon.common.exception.UseCouponRuleException
 import com.yosep.coupon.coupon.data.jpa.dto.OrderProductDiscountCouponStepDto
 import com.yosep.coupon.coupon.data.jpa.dto.ProductDiscountCouponDtoForCreation
 import com.yosep.coupon.coupon.data.jpa.dto.response.ProductDiscountCouponCreationResponse
@@ -16,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import java.lang.RuntimeException
+import java.util.*
 import javax.validation.Valid
 
 @RestController
@@ -56,12 +60,26 @@ class ProductDiscountCouponController @Autowired constructor(
         return if (errors.hasErrors()) {
             ResponseEntity.badRequest().body(errors)
         } else try {
-            productDiscountCouponCommandService.processProductDiscountCouponStep(orderProductDiscountCouponStepDto)
-
-            ResponseEntity.ok()
+            ResponseEntity.ok(
+                productDiscountCouponCommandService.processProductDiscountCouponStep(
+                    orderProductDiscountCouponStepDto
+                )
+            )
+        } catch (notExistElementException: NotExistElementException) {
+            orderProductDiscountCouponStepDto.state = notExistElementException.javaClass.simpleName
+            return ResponseEntity.ok(orderProductDiscountCouponStepDto)
+        } catch (alreadyUsedException: AlreadyUsedException) {
+            orderProductDiscountCouponStepDto.state = alreadyUsedException.javaClass.simpleName
+            return ResponseEntity.ok(orderProductDiscountCouponStepDto)
+        } catch (expireCouponException: ExpireCouponException) {
+            orderProductDiscountCouponStepDto.state = expireCouponException.javaClass.simpleName
+            return ResponseEntity.ok(orderProductDiscountCouponStepDto)
+        } catch (useCouponRuleException: UseCouponRuleException) {
+            orderProductDiscountCouponStepDto.state = useCouponRuleException.javaClass.simpleName
+            return ResponseEntity.ok(orderProductDiscountCouponStepDto)
         } catch (runtimeException: RuntimeException) {
             orderProductDiscountCouponStepDto.state = "EXCEPTION"
-            ResponseEntity.ok()
-        } as ResponseEntity<*>
+            return ResponseEntity.ok(orderProductDiscountCouponStepDto)
+        }
     }
 }

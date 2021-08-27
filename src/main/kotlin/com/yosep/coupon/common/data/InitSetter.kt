@@ -59,8 +59,8 @@ class InitSetter @Autowired constructor(
                 CouponStockVo(100, 100),
                 "test-product-category1-$i",
                 CouponDiscountVo(
-                    10000,
-                    0
+                    0,
+                    10L * (i+1)
                 )
             )
 
@@ -107,10 +107,21 @@ class InitSetter @Autowired constructor(
                 "coupon-product-amount-test$i"
             )
 
-            couponByUserCommandService.ownCoupon(couponByUserCreationDto)
+            couponByUserCommandService.ownCouponForTest(couponByUserCreationDto)
         }
 
-        // 유저 상품 비율 할인 쿠폰 할당 3개
+        // 유저 전체 금액 할인 쿠폰 할당 3개
+        for(i in 1..3) {
+            val couponByUserCreationDto = CouponByUserCreationDto(
+                "own-total-amount-coupon-test$i",
+                "user-admin-for-test",
+                "coupon-total-amount-test$i"
+            )
+
+            couponByUserCommandService.ownCouponForTest(couponByUserCreationDto)
+        }
+
+        // 유저 상품 비율 할인 쿠폰 할당 2개
         for(i in 1..2) {
             val couponByUserCreationDto = CouponByUserCreationDto(
                 "own-product-percent-coupon-test$i",
@@ -118,18 +129,7 @@ class InitSetter @Autowired constructor(
                 "coupon-product-percent-test$i"
             )
 
-            couponByUserCommandService.ownCoupon(couponByUserCreationDto)
-        }
-
-        // 유저 전체 비율 할인 쿠폰 할당 3개
-        for(i in 1..3) {
-            val couponByUserCreationDto = CouponByUserCreationDto(
-                "own-total-amount-coupon-test$i",
-                "user-admin-for-test",
-                "coupon-total-percent-test$i"
-            )
-
-            couponByUserCommandService.ownCoupon(couponByUserCreationDto)
+            couponByUserCommandService.ownCouponForTest(couponByUserCreationDto)
         }
 
         // 유저 전체 비율 할인 쿠폰 할당 3개
@@ -137,10 +137,10 @@ class InitSetter @Autowired constructor(
             val couponByUserCreationDto = CouponByUserCreationDto(
                 "own-total-percent-coupon-test$i",
                 "user-admin-for-test",
-                "coupon-total-amount-test$i"
+                "coupon-total-percent-test$i"
             )
 
-            couponByUserCommandService.ownCoupon(couponByUserCreationDto)
+            couponByUserCommandService.ownCouponForTest(couponByUserCreationDto)
         }
     }
 
@@ -159,6 +159,27 @@ class InitSetter @Autowired constructor(
 
         for (i in 1..3) {
             couponCommandService.deleteCouponById("coupon-total-percent-test$i")
+        }
+
+        val userId = "user-admin-for-test"
+        // 유저 상품 금액 할인 쿠폰 할당 3개
+        for(i in 1..3) {
+            couponByUserCommandService.deleteCouponByUser("own-product-amount-coupon-test$i")
+        }
+
+        // 유저 전체 비율 할인 쿠폰 할당 3개
+        for(i in 1..3) {
+            couponByUserCommandService.deleteCouponByUser("own-total-amount-coupon-test$i")
+        }
+
+        // 유저 상품 비율 할인 쿠폰 할당 2개
+        for(i in 1..2) {
+            couponByUserCommandService.deleteCouponByUser("own-product-percent-coupon-test$i")
+        }
+
+        // 유저 전체 금액 비율 쿠폰 할당 3개
+        for(i in 1..3) {
+            couponByUserCommandService.deleteCouponByUser("own-total-percent-coupon-test$i")
         }
     }
 }

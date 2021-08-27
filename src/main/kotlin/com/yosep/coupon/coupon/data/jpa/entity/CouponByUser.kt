@@ -2,21 +2,21 @@ package com.yosep.coupon.coupon.data.jpa.entity
 
 import com.yosep.coupon.common.data.BaseEntity
 import com.yosep.coupon.common.exception.AlreadyUsedException
+import com.yosep.coupon.common.exception.ExpireCouponException
 import com.yosep.coupon.common.exception.NoHasCouponException
 import com.yosep.coupon.coupon.data.jpa.dto.OrderDiscountCouponDto
 import java.lang.RuntimeException
 import javax.persistence.*
-import javax.validation.constraints.NotNull
 
 @Entity
 @Table(name = "yos_coupon_owned_by_user")
 class CouponByUser(
     @Id
-    @Column(length = 20)
+    @Column(length = 40)
     val id: String,
     @Column(nullable = false)
     val userId: String,
-    @ManyToOne(fetch = FetchType.LAZY, cascade = [CascadeType.ALL])
+    @ManyToOne(cascade = [CascadeType.ALL, CascadeType.REMOVE])
     @JoinColumn(name = "coupon_id", nullable = true)
     val coupon: Coupon,
     @Enumerated(EnumType.STRING)
@@ -25,13 +25,19 @@ class CouponByUser(
     fun getCouponByUserId(): String = this.id
 
     fun use(orderDiscountCouponDto: OrderDiscountCouponDto): OrderDiscountCouponDto {
-        this.state = CouponState.PENDING
-        if(this.state != CouponState.READY) {
+        if(this.state == CouponState.EXPIRE) {
+            // 만료 Exception
+            orderDiscountCouponDto.state = ExpireCouponException::class.java.simpleName
+            throw ExpireCouponException("만료된 쿠폰입니다.")
+        }
+
+        if(this.state == CouponState.COMP || this.state == CouponState.PENDING) {
             // exception
-            orderDiscountCouponDto.state = "AlreadyUsedException"
+            orderDiscountCouponDto.state = AlreadyUsedException::class.java.simpleName
             this.state = CouponState.READY
             throw AlreadyUsedException("이미 사용한 쿠폰입니다.")
         }
+        this.state = CouponState.PENDING
 
         validateCouponDto(orderDiscountCouponDto)
         val coupon = this.coupon

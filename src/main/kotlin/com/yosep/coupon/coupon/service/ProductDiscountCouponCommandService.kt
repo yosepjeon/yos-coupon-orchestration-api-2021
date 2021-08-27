@@ -3,6 +3,7 @@ package com.yosep.coupon.coupon.service
 import com.yosep.coupon.common.data.RandomIdGenerator
 import com.yosep.coupon.common.exception.NotExistElementException
 import com.yosep.coupon.common.exception.NotExistProductException
+import com.yosep.coupon.common.exception.UseCouponRuleException
 import com.yosep.coupon.coupon.data.jpa.dto.CreatedProductDiscountCouponDto
 import com.yosep.coupon.coupon.data.jpa.dto.OrderProductDiscountCouponDto
 import com.yosep.coupon.coupon.data.jpa.dto.OrderProductDiscountCouponStepDto
@@ -66,19 +67,26 @@ class ProductDiscountCouponCommandService @Autowired constructor(
         val orderProductDiscountCouponDtos = orderProductDiscountCouponStepDto.orderProductDiscountCouponDtos
         orderProductDiscountCouponStepDto.state = "PENDING"
 
+        val usedCouponsByProduct = mutableMapOf<String, Int>()
+
         orderProductDiscountCouponDtos.forEach { orderProductDiscountCouponDto ->
             orderProductDiscountCouponDto.state = "PENDING"
+            if(usedCouponsByProduct.getOrDefault(orderProductDiscountCouponDto.productId, -1) != -1) {
+                orderProductDiscountCouponDto.state = UseCouponRuleException::class.java.simpleName
+                throw UseCouponRuleException("하나의 상품에 하나의 쿠폰만 사용 가능합니다.")
+            }
 
-            val optionalCouponByUser = couponByUserRepository.findByUserId(orderProductDiscountCouponDto.userId)
+//            val optionalCouponByUser = couponByUserRepository.findByUserId(orderProductDiscountCouponDto.userId)
+            val optionalCouponByUser = couponByUserRepository.findById(orderProductDiscountCouponDto.couponByUserId)
 
             if (optionalCouponByUser.isEmpty) {
-                orderProductDiscountCouponDto.state = "NotExistElementException"
-                orderProductDiscountCouponStepDto.state = "EXCEPTION"
+                orderProductDiscountCouponDto.state = NotExistElementException::class.java.simpleName
                 throw NotExistElementException("해당 쿠폰이 존재하지 않습니다.")
             }
 
             val selectedCouponByUser = optionalCouponByUser.get()
             selectedCouponByUser.use(orderProductDiscountCouponDto)
+            usedCouponsByProduct[orderProductDiscountCouponDto.productId] = 1
         }
 
         orderProductDiscountCouponStepDto.state = "COMP"

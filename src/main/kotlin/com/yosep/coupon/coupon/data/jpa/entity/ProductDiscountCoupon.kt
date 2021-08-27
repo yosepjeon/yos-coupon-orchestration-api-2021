@@ -20,6 +20,7 @@ class ProductDiscountCoupon(
     @Column(nullable = false)
     val productId: String,
     couponDiscount: CouponDiscount,
+    couponByUsers: List<CouponByUser>?,
     startTime: LocalDateTime?,
     endTime: LocalDateTime?,
     dtype: String?,
@@ -30,6 +31,7 @@ class ProductDiscountCoupon(
     editableState,
     couponStock,
     couponDiscount,
+    couponByUsers,
     startTime,
     endTime,
     dtype,

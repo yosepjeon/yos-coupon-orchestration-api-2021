@@ -26,16 +26,6 @@ class CouponCommandService @Autowired constructor(
     private val restTemplate: RestTemplate
 ) {
 
-    @Transactional(
-        readOnly = false,
-        rollbackFor = [RuntimeException::class, NotExistElementException::class]
-    )
-    @Lock(value = LockModeType.PESSIMISTIC_WRITE)
-    fun ownCoupon(couponId: String) {
-
-    }
-
-
     /*
     * 쿠폰 삭제
      */
