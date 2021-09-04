@@ -107,12 +107,10 @@ class ProductDiscountCouponControllerTest @Autowired constructor(
     }
 
     @Test
-    @DisplayName("[Product Discount Coupon Controller] 주문 상품할인 SAGA 처리 테스트")
-    fun 주문_상품_금액_할인_SAGA_처리_테스트() {
-        log.info("[Product Discount Coupon Controller] 주문 상품할인 SAGA 처리 테스트")
+    @DisplayName("[Product Discount Coupon Controller] 주문 상품 금액 할인 SAGA 처리 성공 테스트")
+    fun 주문_상품_금액_할인_SAGA_처리_성공_테스트() {
+        log.info("[Product Discount Coupon Controller] 주문 상품 금액 할인 SAGA 처리 성공 테스트")
         val orderProductDiscountCouponDtos = mutableListOf<OrderProductDiscountCouponDto>()
-
-
 
         // 금액 할인 쿠폰 사용
         for (i in 1..2) {
@@ -163,22 +161,20 @@ class ProductDiscountCouponControllerTest @Autowired constructor(
     }
 
     @Test
-    @DisplayName("[Product Discount Coupon Controller] 주문 상품할인 SAGA 처리 테스트")
-    fun 주문_상품_비율_할인_SAGA_처리_테스트() {
-        log.info("[Product Discount Coupon Controller] 주문 상품할인 SAGA 처리 테스트")
+    @DisplayName("[Product Discount Coupon Controller] 주문 상품 비율 할인 SAGA 처리 성공 테스트")
+    fun 주문_상품_비율_할인_SAGA_처리_성공_테스트() {
+        log.info("[Product Discount Coupon Controller] 주문 상품 비율 할인 SAGA 처리 성공 테스트")
         val orderProductDiscountCouponDtos = mutableListOf<OrderProductDiscountCouponDto>()
-
-
 
         // 비율 할인 쿠폰 사용
         for (i in 1..2) {
             val orderProductDiscountCouponDto = OrderProductDiscountCouponDto(
                 "PRODUCT",
-                "own-product-amount-coupon-test$i",
+                "own-product-percent-coupon-test$i",
                 1L * i,
                 "user-admin-for-test",
                 0,
-                10L * (i),
+                10L * (i+1),
                 "test-product-category1-$i",
                 i * 111000L,
                 0,
@@ -219,12 +215,10 @@ class ProductDiscountCouponControllerTest @Autowired constructor(
     }
 
     @Test
-    @DisplayName("[Product Discount Coupon Controller] 주문 상품할인 SAGA 처리 테스트")
-    fun 주문_상품_할인_SAGA_처리_테스트() {
-        log.info("[Product Discount Coupon Controller] 주문 상품할인 SAGA 처리 테스트")
+    @DisplayName("[Product Discount Coupon Controller] 주문 상품할인 SAGA 처리 성공 테스트")
+    fun 주문_상품_할인_SAGA_처리_성공_테스트() {
+        log.info("[Product Discount Coupon Controller] 주문 상품할인 SAGA 처리 성공 테스트")
         val orderProductDiscountCouponDtos = mutableListOf<OrderProductDiscountCouponDto>()
-
-
 
         // 금액 할인 쿠폰 사용
         for (i in 1..2) {
@@ -235,6 +229,24 @@ class ProductDiscountCouponControllerTest @Autowired constructor(
                 "user-admin-for-test",
                 10000,
                 0,
+                "test-product-category1-$i",
+                i * 111000L,
+                0,
+                "READY"
+            )
+
+            orderProductDiscountCouponDtos.add(orderProductDiscountCouponDto)
+        }
+
+        // 비율 할인 쿠폰 사용
+        for (i in 1..2) {
+            val orderProductDiscountCouponDto = OrderProductDiscountCouponDto(
+                "PRODUCT",
+                "own-product-percent-coupon-test$i",
+                1L * i,
+                "user-admin-for-test",
+                0,
+                10L * (i+1),
                 "test-product-category1-$i",
                 i * 111000L,
                 0,

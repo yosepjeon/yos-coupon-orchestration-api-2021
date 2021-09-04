@@ -101,35 +101,34 @@ class CouponStepService @Autowired constructor(
      * SAGA 전체 할인 쿠폰 스텝 진행
      * Logic:
      */
-    @Transactional(
-        readOnly = false,
-//        rollbackFor = [NotExistElementException::class, RuntimeException::class, NotEqualProductPrice::class, InvalidStockValueException::class],
-    )
+    @Transactional(readOnly = false)
     fun processTotalDiscountCouponStep(orderTotalDiscountCouponStepDto: OrderTotalDiscountCouponStepDto): OrderTotalDiscountCouponStepDto {
-        val orderTotalDiscountDtos = orderTotalDiscountCouponStepDto.orderTotalDiscountCouponDtos
+        val orderTotalDiscountCouponDtos = orderTotalDiscountCouponStepDto.orderTotalDiscountCouponDtos
         orderTotalDiscountCouponStepDto.state = "PENDING"
 
-        orderTotalDiscountDtos.forEach { orderTotakDiscountCouponDto ->
-            orderTotakDiscountCouponDto.state = "PENDING"
+        val usedCouponsByProduct = mutableMapOf<String, Int>()
+        var calculatedPrice = orderTotalDiscountCouponStepDto.totalPrice
 
-            val optionalCoupon = couponByUserRepository.findById(orderTotakDiscountCouponDto.couponByUserId)
-            if (optionalCoupon.isEmpty) {
-                orderTotakDiscountCouponDto.state = "NotExistElementException"
-                orderTotalDiscountCouponStepDto.state = "EXCEPTION"
-                throw NotExistElementException(
-                    orderTotakDiscountCouponDto.couponByUserId + " 해당 쿠폰이 존재하지 않습니다."
-                )
+        orderTotalDiscountCouponDtos.forEach { orderTotalDiscountCouponDtos ->
+            orderTotalDiscountCouponDtos.state = "PENDING"
+//            if(usedCouponsByProduct.getOrDefault(orderTotalDiscountCouponDtos.productId, -1) != -1) {
+//                orderTotalDiscountCouponDtos.state = UsingCouponRuleViolationException::class.java.simpleName
+//                throw UsingCouponRuleViolationException("하나의 상품에 하나의 쿠폰만 사용 가능합니다.")
+//            }
+
+            val optionalCouponByUser = couponByUserRepository.findById(orderTotalDiscountCouponDtos.couponByUserId)
+
+            if (optionalCouponByUser.isEmpty) {
+                orderTotalDiscountCouponDtos.state = NotExistElementException::class.java.simpleName
+                throw NotExistElementException("해당 쿠폰이 존재하지 않습니다.")
             }
 
-            val selectedCoupon = optionalCoupon.get()
-            selectedCoupon.use(orderTotakDiscountCouponDto)
-            orderTotakDiscountCouponDto.state = "COMP"
+            val selectedCouponByUser = optionalCouponByUser.get()
+            calculatedPrice = selectedCouponByUser.use(calculatedPrice,orderTotalDiscountCouponDtos)
         }
 
-        if (orderTotalDiscountCouponStepDto.state == "PENDING") {
-            orderTotalDiscountCouponStepDto.state = "COMP"
-        }
-
+        orderTotalDiscountCouponStepDto.calculatedPrice = calculatedPrice
+        orderTotalDiscountCouponStepDto.state = "COMP"
         return orderTotalDiscountCouponStepDto
     }
 

@@ -91,7 +91,7 @@ class InitSetter @Autowired constructor(
                 CouponStockVo(100, 100),
                 CouponDiscountVo(
                     0,
-                    30
+                    10L * i
                 )
             )
 

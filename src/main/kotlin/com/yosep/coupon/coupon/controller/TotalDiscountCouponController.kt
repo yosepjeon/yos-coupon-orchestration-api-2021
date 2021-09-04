@@ -1,6 +1,10 @@
 package com.yosep.coupon.coupon.controller
 
-import com.yosep.coupon.coupon.data.jpa.dto.OrderProductDiscountCouponStepDto
+import com.yosep.coupon.common.exception.AlreadyUsedException
+import com.yosep.coupon.common.exception.ExpireCouponException
+import com.yosep.coupon.common.exception.NotExistElementException
+import com.yosep.coupon.common.exception.UsingCouponRuleViolationException
+import com.yosep.coupon.coupon.data.jpa.dto.OrderTotalDiscountCouponStepDto
 import com.yosep.coupon.coupon.data.jpa.dto.TotalDiscountCouponDtoForCreation
 import com.yosep.coupon.coupon.data.jpa.dto.response.TotalDiscountCouponCreationResponse
 import com.yosep.coupon.coupon.service.CouponCommandService
@@ -40,18 +44,36 @@ class TotalDiscountCouponController @Autowired constructor(
         return ResponseEntity.ok(response)
     }
 
-    @PostMapping("order-saga-total-coupon")
+    @PostMapping("/order-saga-total-coupon")
     fun processOrderToCouponUseTotalCouponSaga(
-        @RequestBody orderTotalDiscountCouponStepDto: @Valid OrderProductDiscountCouponStepDto,
+        @RequestBody orderTotalDiscountCouponStepDto: @Valid OrderTotalDiscountCouponStepDto,
         errors: Errors
     ): ResponseEntity<*> {
+        val orderTotalDiscountCouponStepDto = orderTotalDiscountCouponStepDto
+
         return if (errors.hasErrors()) {
             ResponseEntity.badRequest().body(errors)
         } else try {
-            ResponseEntity.ok()
+            ResponseEntity.ok(
+                totalDiscountCouponCommandService.processTotalDiscountCouponStep(
+                    orderTotalDiscountCouponStepDto
+                )
+            )
+        } catch (notExistElementException: NotExistElementException) {
+            orderTotalDiscountCouponStepDto.state = notExistElementException.javaClass.simpleName
+            return ResponseEntity.ok(orderTotalDiscountCouponStepDto)
+        } catch (alreadyUsedException: AlreadyUsedException) {
+            orderTotalDiscountCouponStepDto.state = alreadyUsedException.javaClass.simpleName
+            return ResponseEntity.ok(orderTotalDiscountCouponStepDto)
+        } catch (expireCouponException: ExpireCouponException) {
+            orderTotalDiscountCouponStepDto.state = expireCouponException.javaClass.simpleName
+            return ResponseEntity.ok(orderTotalDiscountCouponStepDto)
+        } catch (usingCouponRuleViolationException: UsingCouponRuleViolationException) {
+            orderTotalDiscountCouponStepDto.state = usingCouponRuleViolationException.javaClass.simpleName
+            return ResponseEntity.ok(orderTotalDiscountCouponStepDto)
         } catch (runtimeException: RuntimeException) {
             orderTotalDiscountCouponStepDto.state = "EXCEPTION"
-            ResponseEntity.ok()
-        } as ResponseEntity<*>
+            return ResponseEntity.ok(orderTotalDiscountCouponStepDto)
+        }
     }
 }

@@ -4,8 +4,8 @@ import javax.persistence.Embeddable
 
 @Embeddable
 class CouponDiscount(
-    var discountAmount:Long = 0,
-    var discountPercent:Long = 0
+    var discountAmount: Long = 0,
+    var discountPercent: Long = 0
 ) {
     fun calculateProductPrice(productPrice: Long): Long {
         var value = productPrice
@@ -19,6 +19,6 @@ class CouponDiscount(
     }
 
     private fun calculatePercent(value: Long): Long {
-        return if (discountPercent <= 0) value else value / 100 * discountPercent / 100 * 100
+        return if (discountPercent <= 0) value else value / 100 * (100 - discountPercent) / 100 * 100
     }
 }

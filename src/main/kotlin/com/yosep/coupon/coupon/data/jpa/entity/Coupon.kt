@@ -6,6 +6,7 @@ import com.yosep.coupon.common.exception.NotEqualDiscountAmountException
 import com.yosep.coupon.common.exception.NotEqualDiscountPercentException
 import com.yosep.coupon.coupon.data.jpa.dto.OrderDiscountCouponDto
 import com.yosep.coupon.coupon.data.jpa.dto.OrderProductDiscountCouponDto
+import com.yosep.coupon.coupon.data.jpa.dto.OrderTotalDiscountCouponDto
 import java.time.LocalDateTime
 import javax.persistence.*
 import javax.validation.constraints.NotNull
@@ -39,6 +40,7 @@ abstract class Coupon(
     open var state: CouponState? = CouponState.READY
 ) : BaseEntity() {
 
+    abstract fun calculatePrice(orderDiscountCouponDto: Long): Long
     abstract fun calculatePrice(orderDiscountCouponDto: OrderDiscountCouponDto): Long
     abstract fun getCoupon(orderDiscountCouponDto: OrderDiscountCouponDto)
 

@@ -3,14 +3,13 @@ package com.yosep.coupon.coupon.controller
 import com.yosep.coupon.common.exception.AlreadyUsedException
 import com.yosep.coupon.common.exception.ExpireCouponException
 import com.yosep.coupon.common.exception.NotExistElementException
-import com.yosep.coupon.common.exception.UseCouponRuleException
+import com.yosep.coupon.common.exception.UsingCouponRuleViolationException
 import com.yosep.coupon.coupon.data.jpa.dto.OrderProductDiscountCouponStepDto
 import com.yosep.coupon.coupon.data.jpa.dto.ProductDiscountCouponDtoForCreation
 import com.yosep.coupon.coupon.data.jpa.dto.response.ProductDiscountCouponCreationResponse
 import com.yosep.coupon.coupon.service.CouponCommandService
 import com.yosep.coupon.coupon.service.CouponQueryService
 import com.yosep.coupon.coupon.service.ProductDiscountCouponCommandService
-import com.yosep.coupon.coupon.service.TotalDiscountCouponCommandService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.Errors
@@ -19,7 +18,6 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import java.lang.RuntimeException
-import java.util.*
 import javax.validation.Valid
 
 @RestController
@@ -74,8 +72,8 @@ class ProductDiscountCouponController @Autowired constructor(
         } catch (expireCouponException: ExpireCouponException) {
             orderProductDiscountCouponStepDto.state = expireCouponException.javaClass.simpleName
             return ResponseEntity.ok(orderProductDiscountCouponStepDto)
-        } catch (useCouponRuleException: UseCouponRuleException) {
-            orderProductDiscountCouponStepDto.state = useCouponRuleException.javaClass.simpleName
+        } catch (usingCouponRuleViolationException: UsingCouponRuleViolationException) {
+            orderProductDiscountCouponStepDto.state = usingCouponRuleViolationException.javaClass.simpleName
             return ResponseEntity.ok(orderProductDiscountCouponStepDto)
         } catch (runtimeException: RuntimeException) {
             orderProductDiscountCouponStepDto.state = "EXCEPTION"

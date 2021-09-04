@@ -3,9 +3,8 @@ package com.yosep.coupon.coupon.service
 import com.yosep.coupon.common.data.RandomIdGenerator
 import com.yosep.coupon.common.exception.NotExistElementException
 import com.yosep.coupon.common.exception.NotExistProductException
-import com.yosep.coupon.common.exception.UseCouponRuleException
+import com.yosep.coupon.common.exception.UsingCouponRuleViolationException
 import com.yosep.coupon.coupon.data.jpa.dto.CreatedProductDiscountCouponDto
-import com.yosep.coupon.coupon.data.jpa.dto.OrderProductDiscountCouponDto
 import com.yosep.coupon.coupon.data.jpa.dto.OrderProductDiscountCouponStepDto
 import com.yosep.coupon.coupon.data.jpa.dto.ProductDiscountCouponDtoForCreation
 import com.yosep.coupon.coupon.data.jpa.entity.CouponState
@@ -72,11 +71,10 @@ class ProductDiscountCouponCommandService @Autowired constructor(
         orderProductDiscountCouponDtos.forEach { orderProductDiscountCouponDto ->
             orderProductDiscountCouponDto.state = "PENDING"
             if(usedCouponsByProduct.getOrDefault(orderProductDiscountCouponDto.productId, -1) != -1) {
-                orderProductDiscountCouponDto.state = UseCouponRuleException::class.java.simpleName
-                throw UseCouponRuleException("하나의 상품에 하나의 쿠폰만 사용 가능합니다.")
+                orderProductDiscountCouponDto.state = UsingCouponRuleViolationException::class.java.simpleName
+                throw UsingCouponRuleViolationException("하나의 상품에 하나의 쿠폰만 사용 가능합니다.")
             }
 
-//            val optionalCouponByUser = couponByUserRepository.findByUserId(orderProductDiscountCouponDto.userId)
             val optionalCouponByUser = couponByUserRepository.findById(orderProductDiscountCouponDto.couponByUserId)
 
             if (optionalCouponByUser.isEmpty) {
