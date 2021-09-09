@@ -120,6 +120,7 @@ class TotalDiscountCouponControllerTest @Autowired constructor(
         }
 
         val orderTotalDiscountCouponStepDto = OrderTotalDiscountCouponStepDto(
+            "total-discount-coupon-test",
             100000,
             orderTotalDiscountCouponDtos,
             0,

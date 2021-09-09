@@ -1,9 +1,15 @@
 package com.yosep.coupon.coupon.service
 
 import com.yosep.coupon.common.exception.*
+import com.yosep.coupon.coupon.data.event.RevertProductDiscountCouponStepEvent
+import com.yosep.coupon.coupon.data.event.RevertTotalDiscountCouponStepEvent
 import com.yosep.coupon.coupon.data.jpa.dto.OrderProductDiscountCouponStepDto
 import com.yosep.coupon.coupon.data.jpa.dto.OrderTotalDiscountCouponStepDto
+import com.yosep.coupon.coupon.data.jpa.entity.CouponEvent
 import com.yosep.coupon.coupon.data.jpa.repository.db.CouponByUserRepository
+import com.yosep.coupon.coupon.data.jpa.repository.db.CouponEventRepository
+import com.yosep.coupon.coupon.data.jpa.vo.EventId
+import com.yosep.coupon.coupon.data.jpa.vo.EventType
 import com.yosep.coupon.data.jpa.repository.db.CouponRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
@@ -11,10 +17,10 @@ import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.client.RestTemplate
 
 @Service
-@Transactional(readOnly = false)
 class CouponStepService @Autowired constructor(
     private val couponRepository: CouponRepository,
     private val couponByUserRepository: CouponByUserRepository,
+    private val couponEventRepository: CouponEventRepository,
     private val restTemplate: RestTemplate
 ) {
     /*
@@ -76,9 +82,18 @@ class CouponStepService @Autowired constructor(
     /*
      * SAGA 상품 할인 쿠폰 스텝 Revert
      */
-    fun revertProductDiscountCouponStep(orderProductDiscountCouponStepDto: OrderProductDiscountCouponStepDto): OrderProductDiscountCouponStepDto {
-        val orderProductDiscountDtos = orderProductDiscountCouponStepDto.orderProductDiscountCouponDtos
-        orderProductDiscountCouponStepDto.state = "PENDING"
+    @Transactional(readOnly = false)
+    fun revertProductDiscountCouponStep(revertProductDiscountCouponStepEvent: RevertProductDiscountCouponStepEvent) {
+        val couponEvent = CouponEvent(
+            EventId(
+                revertProductDiscountCouponStepEvent.eventId,
+                EventType.REVERT_TOTAL_DISCOUNT_COUPON
+            )
+        )
+
+        couponEventRepository.save(couponEvent)
+
+        val orderProductDiscountDtos = revertProductDiscountCouponStepEvent.orderProductDiscountCouponDtos
 
         orderProductDiscountDtos.forEach { orderProductDiscountCouponDto ->
             orderProductDiscountCouponDto.state = "REVERT-PENDING"
@@ -92,9 +107,6 @@ class CouponStepService @Autowired constructor(
                 orderProductDiscountCouponDto.state = "REVERTED"
             }
         }
-
-        orderProductDiscountCouponStepDto.state = "COMP"
-        return orderProductDiscountCouponStepDto
     }
 
     /*
@@ -124,7 +136,7 @@ class CouponStepService @Autowired constructor(
             }
 
             val selectedCouponByUser = optionalCouponByUser.get()
-            calculatedPrice = selectedCouponByUser.use(calculatedPrice,orderTotalDiscountCouponDtos)
+            calculatedPrice = selectedCouponByUser.use(calculatedPrice, orderTotalDiscountCouponDtos)
         }
 
         orderTotalDiscountCouponStepDto.calculatedPrice = calculatedPrice
@@ -137,8 +149,18 @@ class CouponStepService @Autowired constructor(
      * SAGA 전체 할인 쿠폰 스텝 Revert
      * Logic:
      */
-    fun revertTotalDiscountCouponStep(orderTotalDiscountCouponStepDto: OrderTotalDiscountCouponStepDto): OrderTotalDiscountCouponStepDto {
-        val orderTotalDiscountDtos = orderTotalDiscountCouponStepDto.orderTotalDiscountCouponDtos
+    @Transactional(readOnly = false)
+    fun revertTotalDiscountCouponStep(revertTotalDiscountCouponStepEvent: RevertTotalDiscountCouponStepEvent) {
+        val couponEvent = CouponEvent(
+            EventId(
+                revertTotalDiscountCouponStepEvent.eventId,
+                EventType.REVERT_TOTAL_DISCOUNT_COUPON
+            )
+        )
+
+        couponEventRepository.save(couponEvent)
+
+        val orderTotalDiscountDtos = revertTotalDiscountCouponStepEvent.orderTotalDiscountCouponDtos
 
         orderTotalDiscountDtos.forEach { orderTotalDiscountDto ->
             orderTotalDiscountDto.state = "REVERT-PENDING"
@@ -152,7 +174,5 @@ class CouponStepService @Autowired constructor(
                 orderTotalDiscountDto.state = "REVERTED"
             }
         }
-
-        return orderTotalDiscountCouponStepDto
     }
 }

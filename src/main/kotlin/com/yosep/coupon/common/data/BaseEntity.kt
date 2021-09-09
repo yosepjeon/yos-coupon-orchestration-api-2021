@@ -11,8 +11,8 @@ import javax.persistence.MappedSuperclass
 @EntityListeners(AuditingEntityListener::class)
 abstract class BaseEntity {
     @CreatedDate
-    open var createdDate: LocalDateTime? = LocalDateTime.now()
+    open var createdDate: LocalDateTime? = null
 
     @LastModifiedDate
-    open var lastModifiedDate: LocalDateTime? = LocalDateTime.now()
+    open var lastModifiedDate: LocalDateTime? = null
 }

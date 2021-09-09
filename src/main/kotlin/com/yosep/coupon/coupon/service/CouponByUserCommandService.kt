@@ -5,7 +5,7 @@ import com.yosep.coupon.common.exception.NotExistElementException
 import com.yosep.coupon.common.exception.NotExistUserException
 import com.yosep.coupon.coupon.data.jpa.dto.CouponByUserCreationDto
 import com.yosep.coupon.coupon.data.jpa.entity.CouponByUser
-import com.yosep.coupon.coupon.data.jpa.entity.CouponState
+import com.yosep.coupon.coupon.data.jpa.vo.CouponState
 import com.yosep.coupon.coupon.data.jpa.repository.db.CouponByUserRepository
 import com.yosep.coupon.data.jpa.repository.db.CouponRepository
 import org.springframework.beans.factory.annotation.Autowired

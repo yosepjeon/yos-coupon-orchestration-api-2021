@@ -5,6 +5,9 @@ import javax.validation.constraints.NotEmpty
 import javax.validation.constraints.Size
 
 data class OrderTotalDiscountCouponStepDto(
+    @field:NotEmpty
+    val orderId: String,
+
     @field:Min(0)
     val totalPrice: Long,
 
@@ -14,7 +17,6 @@ data class OrderTotalDiscountCouponStepDto(
 
     @field:Min(0)
     var calculatedPrice: Long,
-
     @field:NotEmpty
     var state: String = "READY"
 )

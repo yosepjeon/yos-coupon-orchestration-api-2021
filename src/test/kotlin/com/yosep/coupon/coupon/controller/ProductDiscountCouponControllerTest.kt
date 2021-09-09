@@ -8,7 +8,6 @@ import com.yosep.coupon.coupon.data.jpa.repository.db.CouponByUserRepository
 import com.yosep.coupon.coupon.data.jpa.vo.CouponDiscountVo
 import com.yosep.coupon.coupon.data.jpa.vo.CouponStockVo
 import io.netty.util.internal.logging.Slf4JLoggerFactory
-import org.aspectj.lang.annotation.Before
 import org.junit.jupiter.api.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs
@@ -132,6 +131,7 @@ class ProductDiscountCouponControllerTest @Autowired constructor(
 
 
         val orderProductDiscountCouponStepDto = OrderProductDiscountCouponStepDto(
+            "product-discount-coupon-test",
             orderProductDiscountCouponDtos,
             "READY"
         )
@@ -186,6 +186,7 @@ class ProductDiscountCouponControllerTest @Autowired constructor(
 
 
         val orderProductDiscountCouponStepDto = OrderProductDiscountCouponStepDto(
+            "product-discount-coupon-test",
             orderProductDiscountCouponDtos,
             "READY"
         )
@@ -258,6 +259,7 @@ class ProductDiscountCouponControllerTest @Autowired constructor(
 
 
         val orderProductDiscountCouponStepDto = OrderProductDiscountCouponStepDto(
+            "product-discount-coupon-test",
             orderProductDiscountCouponDtos,
             "READY"
         )

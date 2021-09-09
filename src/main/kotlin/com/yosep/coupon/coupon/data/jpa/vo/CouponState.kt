@@ -1,4 +1,4 @@
-package com.yosep.coupon.coupon.data.jpa.entity
+package com.yosep.coupon.coupon.data.jpa.vo
 
 enum class CouponState {
     READY,

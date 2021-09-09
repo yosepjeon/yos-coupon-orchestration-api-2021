@@ -4,7 +4,7 @@ import com.yosep.coupon.common.exception.InvalidPriceException
 import com.yosep.coupon.common.exception.NotEqualDiscountAmountException
 import com.yosep.coupon.common.exception.NotEqualDiscountPercentException
 import com.yosep.coupon.coupon.data.jpa.dto.OrderDiscountCouponDto
-import com.yosep.coupon.coupon.data.jpa.dto.OrderTotalDiscountCouponDto
+import com.yosep.coupon.coupon.data.jpa.vo.CouponState
 import java.time.LocalDateTime
 import javax.persistence.DiscriminatorValue
 import javax.persistence.Entity

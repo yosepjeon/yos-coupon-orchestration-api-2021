@@ -1,12 +1,8 @@
 package com.yosep.coupon.coupon.data.jpa.entity
 
 import com.yosep.coupon.common.data.BaseEntity
-import com.yosep.coupon.common.exception.InvalidPriceException
-import com.yosep.coupon.common.exception.NotEqualDiscountAmountException
-import com.yosep.coupon.common.exception.NotEqualDiscountPercentException
 import com.yosep.coupon.coupon.data.jpa.dto.OrderDiscountCouponDto
-import com.yosep.coupon.coupon.data.jpa.dto.OrderProductDiscountCouponDto
-import com.yosep.coupon.coupon.data.jpa.dto.OrderTotalDiscountCouponDto
+import com.yosep.coupon.coupon.data.jpa.vo.CouponState
 import java.time.LocalDateTime
 import javax.persistence.*
 import javax.validation.constraints.NotNull

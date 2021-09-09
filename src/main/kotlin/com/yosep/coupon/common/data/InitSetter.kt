@@ -60,7 +60,7 @@ class InitSetter @Autowired constructor(
                 "test-product-category1-$i",
                 CouponDiscountVo(
                     0,
-                    10L * (i+1)
+                    10L * (i + 1)
                 )
             )
 
@@ -100,7 +100,7 @@ class InitSetter @Autowired constructor(
 
         val userId = "user-admin-for-test"
         // 유저 상품 금액 할인 쿠폰 할당 3개
-        for(i in 1..3) {
+        for (i in 1..3) {
             val couponByUserCreationDto = CouponByUserCreationDto(
                 "own-product-amount-coupon-test$i",
                 "user-admin-for-test",
@@ -111,7 +111,7 @@ class InitSetter @Autowired constructor(
         }
 
         // 유저 전체 금액 할인 쿠폰 할당 3개
-        for(i in 1..3) {
+        for (i in 1..3) {
             val couponByUserCreationDto = CouponByUserCreationDto(
                 "own-total-amount-coupon-test$i",
                 "user-admin-for-test",
@@ -122,7 +122,7 @@ class InitSetter @Autowired constructor(
         }
 
         // 유저 상품 비율 할인 쿠폰 할당 2개
-        for(i in 1..2) {
+        for (i in 1..2) {
             val couponByUserCreationDto = CouponByUserCreationDto(
                 "own-product-percent-coupon-test$i",
                 "user-admin-for-test",
@@ -133,7 +133,7 @@ class InitSetter @Autowired constructor(
         }
 
         // 유저 전체 비율 할인 쿠폰 할당 3개
-        for(i in 1..3) {
+        for (i in 1..3) {
             val couponByUserCreationDto = CouponByUserCreationDto(
                 "own-total-percent-coupon-test$i",
                 "user-admin-for-test",
@@ -163,22 +163,22 @@ class InitSetter @Autowired constructor(
 
         val userId = "user-admin-for-test"
         // 유저 상품 금액 할인 쿠폰 할당 3개
-        for(i in 1..3) {
+        for (i in 1..3) {
             couponByUserCommandService.deleteCouponByUser("own-product-amount-coupon-test$i")
         }
 
         // 유저 전체 비율 할인 쿠폰 할당 3개
-        for(i in 1..3) {
+        for (i in 1..3) {
             couponByUserCommandService.deleteCouponByUser("own-total-amount-coupon-test$i")
         }
 
         // 유저 상품 비율 할인 쿠폰 할당 2개
-        for(i in 1..2) {
+        for (i in 1..2) {
             couponByUserCommandService.deleteCouponByUser("own-product-percent-coupon-test$i")
         }
 
         // 유저 전체 금액 비율 쿠폰 할당 3개
-        for(i in 1..3) {
+        for (i in 1..3) {
             couponByUserCommandService.deleteCouponByUser("own-total-percent-coupon-test$i")
         }
     }

@@ -7,7 +7,7 @@ import com.yosep.coupon.common.exception.UsingCouponRuleViolationException
 import com.yosep.coupon.coupon.data.jpa.dto.CreatedProductDiscountCouponDto
 import com.yosep.coupon.coupon.data.jpa.dto.OrderProductDiscountCouponStepDto
 import com.yosep.coupon.coupon.data.jpa.dto.ProductDiscountCouponDtoForCreation
-import com.yosep.coupon.coupon.data.jpa.entity.CouponState
+import com.yosep.coupon.coupon.data.jpa.vo.CouponState
 import com.yosep.coupon.coupon.data.jpa.entity.EditableState
 import com.yosep.coupon.coupon.data.jpa.repository.db.CouponByUserRepository
 import com.yosep.coupon.data.jpa.repository.db.CouponRepository

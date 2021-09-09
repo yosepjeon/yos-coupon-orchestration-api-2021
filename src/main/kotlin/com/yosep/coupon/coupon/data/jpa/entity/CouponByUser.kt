@@ -6,7 +6,7 @@ import com.yosep.coupon.common.exception.ExpireCouponException
 import com.yosep.coupon.common.exception.NoHasCouponException
 import com.yosep.coupon.coupon.data.jpa.dto.OrderDiscountCouponDto
 import com.yosep.coupon.coupon.data.jpa.dto.OrderTotalDiscountCouponDto
-import java.lang.RuntimeException
+import com.yosep.coupon.coupon.data.jpa.vo.CouponState
 import javax.persistence.*
 
 @Entity

@@ -2,12 +2,10 @@ package com.yosep.coupon.coupon.service
 
 import com.yosep.coupon.common.data.RandomIdGenerator
 import com.yosep.coupon.common.exception.NotExistElementException
-import com.yosep.coupon.common.exception.UsingCouponRuleViolationException
 import com.yosep.coupon.coupon.data.jpa.dto.CreatedTotalDiscountCouponDto
-import com.yosep.coupon.coupon.data.jpa.dto.OrderProductDiscountCouponStepDto
 import com.yosep.coupon.coupon.data.jpa.dto.OrderTotalDiscountCouponStepDto
 import com.yosep.coupon.coupon.data.jpa.dto.TotalDiscountCouponDtoForCreation
-import com.yosep.coupon.coupon.data.jpa.entity.CouponState
+import com.yosep.coupon.coupon.data.jpa.vo.CouponState
 import com.yosep.coupon.coupon.data.jpa.entity.EditableState
 import com.yosep.coupon.coupon.data.jpa.repository.db.CouponByUserRepository
 import com.yosep.coupon.data.jpa.repository.db.CouponRepository
