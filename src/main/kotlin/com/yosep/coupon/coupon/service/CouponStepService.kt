@@ -87,7 +87,7 @@ class CouponStepService @Autowired constructor(
         val couponEvent = CouponEvent(
             EventId(
                 revertProductDiscountCouponStepEvent.eventId,
-                EventType.REVERT_TOTAL_DISCOUNT_COUPON
+                EventType.REVERT_PRODUCT_DISCOUNT_COUPON
             )
         )
 

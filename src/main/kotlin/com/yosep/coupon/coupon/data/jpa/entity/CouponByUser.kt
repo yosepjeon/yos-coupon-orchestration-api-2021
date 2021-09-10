@@ -70,7 +70,8 @@ class CouponByUser(
         val coupon = this.coupon
 
         this.state = CouponState.COMP
-        orderDiscountCouponDto.state = "COMP"
+//        orderDiscountCouponDto.state = "COMP"
+        orderDiscountCouponDto.state = CouponState.COMP.toString()
 
         return coupon.calculatePrice(totalPrice)
     }

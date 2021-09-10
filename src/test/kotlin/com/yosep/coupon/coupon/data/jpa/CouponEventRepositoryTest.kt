@@ -5,7 +5,6 @@ import com.yosep.coupon.coupon.data.jpa.repository.db.CouponEventRepository
 import com.yosep.coupon.coupon.data.jpa.vo.EventId
 import com.yosep.coupon.coupon.data.jpa.vo.EventType
 import io.netty.util.internal.logging.Slf4JLoggerFactory
-import org.hibernate.exception.ConstraintViolationException
 import org.junit.jupiter.api.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
