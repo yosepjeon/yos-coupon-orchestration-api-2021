@@ -5,9 +5,13 @@ import com.yosep.coupon.common.exception.NotExistElementException
 import com.yosep.coupon.coupon.data.jpa.dto.CreatedTotalDiscountCouponDto
 import com.yosep.coupon.coupon.data.jpa.dto.OrderTotalDiscountCouponStepDto
 import com.yosep.coupon.coupon.data.jpa.dto.TotalDiscountCouponDtoForCreation
+import com.yosep.coupon.coupon.data.jpa.entity.CouponEvent
 import com.yosep.coupon.coupon.data.jpa.vo.CouponState
 import com.yosep.coupon.coupon.data.jpa.entity.EditableState
 import com.yosep.coupon.coupon.data.jpa.repository.db.CouponByUserRepository
+import com.yosep.coupon.coupon.data.jpa.repository.db.CouponEventRepository
+import com.yosep.coupon.coupon.data.jpa.vo.EventId
+import com.yosep.coupon.coupon.data.jpa.vo.EventType
 import com.yosep.coupon.data.jpa.repository.db.CouponRepository
 import com.yosep.coupon.mapper.CouponMapper
 import org.springframework.beans.factory.annotation.Autowired
@@ -20,6 +24,7 @@ import org.springframework.web.client.RestTemplate
 class TotalDiscountCouponCommandService @Autowired constructor(
     private val couponRepository: CouponRepository,
     private val couponByUserRepository: CouponByUserRepository,
+    private val couponEventRepository: CouponEventRepository,
     private val restTemplate: RestTemplate
 ) {
     /*
@@ -53,6 +58,15 @@ class TotalDiscountCouponCommandService @Autowired constructor(
     // 전체 할인 쿠폰
     @Transactional(readOnly = false)
     fun processTotalDiscountCouponStep(orderTotalDiscountCouponStepDto: OrderTotalDiscountCouponStepDto): OrderTotalDiscountCouponStepDto {
+        val couponEvent = CouponEvent(
+            EventId(
+                orderTotalDiscountCouponStepDto.orderId,
+                EventType.PROCESS_TOTAL_DISCOUNT_COUPON
+            )
+        )
+
+        couponEventRepository.save(couponEvent)
+
         val orderTotalDiscountCouponDtos = orderTotalDiscountCouponStepDto.orderTotalDiscountCouponDtos
         orderTotalDiscountCouponStepDto.state = "PENDING"
 

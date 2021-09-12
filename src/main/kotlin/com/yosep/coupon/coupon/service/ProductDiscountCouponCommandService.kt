@@ -7,9 +7,13 @@ import com.yosep.coupon.common.exception.UsingCouponRuleViolationException
 import com.yosep.coupon.coupon.data.jpa.dto.CreatedProductDiscountCouponDto
 import com.yosep.coupon.coupon.data.jpa.dto.OrderProductDiscountCouponStepDto
 import com.yosep.coupon.coupon.data.jpa.dto.ProductDiscountCouponDtoForCreation
+import com.yosep.coupon.coupon.data.jpa.entity.CouponEvent
 import com.yosep.coupon.coupon.data.jpa.vo.CouponState
 import com.yosep.coupon.coupon.data.jpa.entity.EditableState
 import com.yosep.coupon.coupon.data.jpa.repository.db.CouponByUserRepository
+import com.yosep.coupon.coupon.data.jpa.repository.db.CouponEventRepository
+import com.yosep.coupon.coupon.data.jpa.vo.EventId
+import com.yosep.coupon.coupon.data.jpa.vo.EventType
 import com.yosep.coupon.data.jpa.repository.db.CouponRepository
 import com.yosep.coupon.mapper.CouponMapper
 import org.springframework.beans.factory.annotation.Autowired
@@ -23,6 +27,7 @@ import org.springframework.web.client.RestTemplate
 class ProductDiscountCouponCommandService @Autowired constructor(
     private val couponRepository: CouponRepository,
     private val couponByUserRepository: CouponByUserRepository,
+    private val couponEventRepository: CouponEventRepository,
     private val restTemplate: RestTemplate
 ) {
     /*
@@ -63,6 +68,15 @@ class ProductDiscountCouponCommandService @Autowired constructor(
 
     @Transactional(readOnly = false)
     fun processProductDiscountCouponStep(orderProductDiscountCouponStepDto: OrderProductDiscountCouponStepDto): OrderProductDiscountCouponStepDto {
+        val couponEvent = CouponEvent(
+            EventId(
+                orderProductDiscountCouponStepDto.orderId,
+                EventType.PROCESS_PRODUCT_DISCOUNT_COUPON
+            )
+        )
+
+        couponEventRepository.save(couponEvent)
+
         val orderProductDiscountCouponDtos = orderProductDiscountCouponStepDto.orderProductDiscountCouponDtos
         orderProductDiscountCouponStepDto.state = "PENDING"
 
