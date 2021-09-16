@@ -19,6 +19,6 @@ class CouponDiscount(
     }
 
     private fun calculatePercent(value: Long): Long {
-        return if (discountPercent <= 0) value else value / 100 * (100 - discountPercent) / 100 * 100
+        return if (discountPercent <= 0) value else (value / 100) * (100 - discountPercent) / 100 * 100
     }
 }

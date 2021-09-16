@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.client.RestTemplate
+import java.lang.RuntimeException
 
 @Service
 @Transactional(readOnly = false)
@@ -88,6 +89,11 @@ class TotalDiscountCouponCommandService @Autowired constructor(
         }
 
         orderTotalDiscountCouponStepDto.calculatedPrice = calculatedPrice
+
+//        if(orderTotalDiscountCouponStepDto.totalPrice != calculatedPrice) {
+//            throw RuntimeException("최종 계산된 가격과 요청 총 가격이 일치하지 않습니다.")
+//        }
+
         orderTotalDiscountCouponStepDto.state = "COMP"
         return orderTotalDiscountCouponStepDto
     }
